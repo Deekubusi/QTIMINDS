@@ -1,16 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./Components/Navbar";
+import Dashboard from "./Components/Dashboard";
+import PendingDues from "./Components/Pending"; 
+import "./App.css";
+// import Practice from "./Components/Practice";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-     <h1 class="text-3xl font-bold underline bg-amber-700">
-    Hello world!
-  </h1>
-  )
+    <BrowserRouter>
+      <div className="app-shell">
+        <Navbar />
+        <div className="app-main">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/pending-dues" element={<PendingDues />} />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
+    
+  );
 }
+// import React from "react";
+// import Practice from "./Components/Practice";
 
-export default App
+// export default function App() {
+//   return (
+//     <Practice />
+//   );
+// }

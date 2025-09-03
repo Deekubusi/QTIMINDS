@@ -1,0 +1,129 @@
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ---------- SIDEBAR ---------- */
+.navbar {
+  position: sticky;           /* stays fixed while right side scrolls */
+  top: 0;
+  height: 100vh;              /* full viewport height */
+  width: 84px;                /* collapsed width default */
+  background: #061970;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 16px 0;
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+
+/* Expanded width */
+.navbar.expanded { width: 218px; }
+
+/* ---------- LOGO ---------- */
+.navbar-logo {
+  align-self: center;
+  width: calc(100% - 24px);
+  max-width: 101px;
+  aspect-ratio: 101 / 37;
+  border-radius: 10px;
+  background: lightgray 50% / cover no-repeat;
+  margin-bottom: 20px;
+}
+
+/* Bigger logo only when expanded */
+.navbar.expanded .navbar-logo {
+  max-width: 143.408px;
+  aspect-ratio: 141 / 52;
+  border-radius: 12.5px;
+  margin-bottom: 24px;
+}
+
+/* ---------- TOGGLE (VECTOR) ---------- */
+.toggle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+}
+.toggle-btn img {
+  width: 28px;
+  height: 28px;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.35));
+}
+
+/* ---------- MENU ---------- */
+.menu {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: stretch;
+  padding-top: 2px;
+
+  /* make menu fill and scroll if needed */
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Each row */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #fff;
+  font-family: "Nunito", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, padding 0.18s ease;
+}
+
+/* Collapsed: center icon */
+.navbar:not(.expanded) .menu-item {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Expanded: icon + label aligned left */
+.navbar.expanded .menu-item {
+  justify-content: flex-start;
+  padding-left: 18px;
+}
+
+.menu-item:hover { background: #2a2b3f; }
+
+/* Icon sizing */
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Labels show only when expanded */
+.menu-label {
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity .15s ease, max-width .15s ease, margin .15s ease;
+}
+.navbar:not(.expanded) .menu-label {
+  opacity: 0; max-width: 0; margin-left: 0; pointer-events: none;
+}
+.navbar.expanded .menu-label {
+  opacity: 1; max-width: 180px; margin-left: 2px;
+}
+
+/* Auto-collapse on small screens */
+@media (max-width: 900px) {
+  .navbar { width: 72px; }
+}
