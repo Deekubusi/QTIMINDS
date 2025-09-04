@@ -125,7 +125,7 @@ export default function Navbar() {
 
   const navItems = [
     { to: "/", label: "Dashboard", icon: <Home className="w-5 h-5" /> },
-    { to: "/analytics", label: "Analytics", icon: <BarChart2 className="w-5 h-5" /> },
+    { to: "/Occupancy", label: "Occupancy", icon: <BarChart2 className="w-5 h-5" /> },
     { to: "/pending-dues", label: "Pending Dues", icon: <Clock className="w-5 h-5" /> },
     { to: "/profitibility", label: "Profitibility", icon: <TrendingUp className="w-5 h-5" /> },
     { to: "/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },

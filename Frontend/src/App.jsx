@@ -36,6 +36,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Dashboard from "./Components/Dashboard";
+import Occupancy from "./Components/Occupancy"; 
 import PendingDues from "./Components/Pending"; 
 import Profitibility from "./Components/Profitibility"; 
 import "./App.css";
@@ -49,7 +50,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/pending-dues" element={<PendingDues />} />
-           < Route path="/Profitibility" element={<Profitibility/>} />
+            < Route path="/Profitibility" element={<Profitibility/>} />
+            < Route path="/Occupancy" element={<Occupancy/>} />
           </Routes>
         </div>
       </div>
