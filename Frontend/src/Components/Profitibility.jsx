@@ -547,14 +547,3 @@ export default function Profitibility() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
