@@ -52,6 +52,7 @@ export default function App() {
             <Route path="/pending-dues" element={<PendingDues />} />
             < Route path="/Profitibility" element={<Profitibility/>} />
             < Route path="/Occupancy" element={<Occupancy/>} />
+          
           </Routes>
         </div>
       </div>
