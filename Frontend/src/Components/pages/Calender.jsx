@@ -174,7 +174,7 @@ setActivity((prev) => [
                         </div>
                       ))}
                       <div className="pt-1">
-                        <span
+                        {/* <span
                           onClick={(e) => {
                             e.stopPropagation();
                             openAddForm(d);
@@ -182,7 +182,7 @@ setActivity((prev) => [
                           className="cursor-pointer text-[11px] text-[#3D63EA] hover:underline"
                         >
                           + add
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                   </button>
