@@ -1,264 +1,223 @@
-import { useMemo, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { ChevronRight, ChevronLeft, Calendar, Plus, X } from "lucide-react";
+import * as Dialog from "@radix-ui/react-dialog";
 
-// ---- date helpers ----
-const iso = (d) => d.toISOString().slice(0, 10); // YYYY-MM-DD
-const addDays = (d, n) => {
-  const x = new Date(d);
-  x.setDate(x.getDate() + n);
-  return x;
-};
-const sameDay = (a, b) => iso(a) === iso(b);
-const dNum = (d) => d.toLocaleDateString(undefined, { day: "numeric" });
-const dWk = (d) => d.toLocaleDateString(undefined, { weekday: "short" });
-const dMon = (d) => d.toLocaleDateString(undefined, { month: "short" });
-const human = (d) =>
-  d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-
-export default function EventsAndActivity() {
-  const today = useMemo(() => {
-    const t = new Date();
-    t.setHours(0, 0, 0, 0);
-    return t;
-  }, []);
-
-  const WINDOW = 7;
-  const [startDate, setStartDate] = useState(today);
-  const [selectedDate, setSelectedDate] = useState(today);
-
-  // events: { "YYYY-MM-DD": ["Event A", "Event B"] }
-  const [events, setEvents] = useState({
-    [iso(today)]: ["Overhead Tank Cleaning"],
-    [iso(addDays(today, 1))]: ["Fire drill"],
+export default function Calendar1() {
+  const [startDate] = useState(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   });
 
-  // recent activity: newest first
-const [activity, setActivity] = useState([
-  `Water leakage ticket is closed on ${human(today)}`,
-  `₹25K Payment received from Candidate 3 on ${human(today)}`,
-  `Candidate2 checked-out on ${human(today)}`,
-  `Candidate1 check-in recorded on ${human(today)}`,
-]);
+  const [events, setEvents] = useState({
+    "2025-09-12": ["Workshop", "Meeting"],
+  });
 
+  const [open, setOpen] = useState(false);
+  const [newEventDate, setNewEventDate] = useState("");
+  const [newEventText, setNewEventText] = useState("");
 
-  const days = Array.from({ length: WINDOW }, (_, i) => addDays(startDate, i));
+  const [visibleStart, setVisibleStart] = useState(0);
+  const [daysToShow, setDaysToShow] = useState(3);
 
-  const moveWindow = (step) => {
-    const next = addDays(startDate, step * WINDOW);
-    setStartDate(next);
-    const end = addDays(next, WINDOW - 1);
-    if (selectedDate < next || selectedDate > end) setSelectedDate(next);
+  useEffect(() => {
+    const updateDaysToShow = () => {
+      if (window.innerWidth < 640) setDaysToShow(1);
+      else if (window.innerWidth < 1024) setDaysToShow(2);
+      else setDaysToShow(3);
+    };
+    updateDaysToShow();
+    window.addEventListener("resize", updateDaysToShow);
+    return () => window.removeEventListener("resize", updateDaysToShow);
+  }, []);
+
+  useEffect(() => {
+    setVisibleStart(0);
+  }, [daysToShow]);
+
+  const formatLocalYMD = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
   };
 
-  // --- add event modal state ---
-  const [showForm, setShowForm] = useState(false);
-  const [formDate, setFormDate] = useState(iso(selectedDate));
-  const [formTitle, setFormTitle] = useState("");
-
-  const openAddForm = (d = selectedDate) => {
-    setFormDate(iso(d));
-    setFormTitle("");
-    setShowForm(true);
+  const parseLocalYMD = (ymd) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    return new Date(y, m - 1, d);
   };
 
-  const addEvent = (e) => {
-    e.preventDefault();
-    const title = formTitle.trim();
-    if (!title) return;
+  const dates = Array.from({ length: 60 }, (_, i) => {
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+    return formatLocalYMD(d);
+  });
 
+  const addEvent = () => {
+    if (!newEventDate || !newEventText) return;
+    setEvents((prev) => ({
+      ...prev,
+      [newEventDate]: [...(prev[newEventDate] || []), newEventText],
+    }));
+    setOpen(false);
+    setNewEventDate("");
+    setNewEventText("");
+  };
+
+  const removeEvent = (date, index) => {
     setEvents((prev) => {
-      const list = prev[formDate] ? [...prev[formDate]] : [];
-      list.push(title);
-      return { ...prev, [formDate]: list };
+      const updated = { ...prev };
+      updated[date].splice(index, 1);
+      if (updated[date].length === 0) delete updated[date];
+      return updated;
     });
-
-setActivity((prev) => [
-  `Event added: "${title}" on ${human(when)}`,
-  ...prev,
-]);
-
-
-    setShowForm(false);
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 md:p-10 bg-[#f7f8fb]">
-      {/* UPCOMING EVENTS */}
-      <section className="space-y-4 mb-10">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Upcoming Events</h2>
+    <div className="relative w-full max-w-[1290px] mx-auto p-6 bg-[#EAF3FF] rounded-[24px]">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-semibold text-lg flex items-center gap-2">
+          <Calendar className="w-5 h-5" /> Upcoming Events Panel
+        </h2>
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+        >
+          <Plus className="w-4 h-4" /> Add Event
+        </button>
+      </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => openAddForm(selectedDate)}
-              className="px-3 py-2 text-sm rounded-lg bg-[#3D63EA] text-white hover:bg-blue-600"
-            >
-              + Add Event
-            </button>
-          </div>
-        </div>
+      {/* Calendar as cards */}
+      <div className="relative bg-white rounded-[24px] shadow-lg p-6 overflow-visible">
+        {/* Left Arrow */}
+        {visibleStart > 0 && (
+          <button
+            onClick={() =>
+              setVisibleStart((prev) => Math.max(0, prev - daysToShow))
+            }
+            className="absolute top-1/2 -translate-y-1/2 left-[-30px] 
+                       bg-white border border-gray-200 p-3 rounded-full shadow-md 
+                       hover:bg-gray-100 z-20"
+          >
+            <ChevronLeft className="w-6 h-6 text-blue-600" />
+          </button>
+        )}
 
-        <div className="relative rounded-xl bg-white shadow-lg">
-          {/* header with month span + pager */}
-          <div className="flex items-center justify-between px-3 py-2">
-            <div className="text-sm text-gray-500">
-              {dMon(days[0])} {days[0].getFullYear()} – {dMon(days[days.length - 1])}{" "}
-              {days[days.length - 1].getFullYear()}
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => moveWindow(-1)}
-                className="h-8 w-8 grid place-items-center rounded-full border border-gray-200 hover:bg-gray-50"
-                aria-label="Previous dates"
-              >
-                <svg viewBox="0 0 20 20" className="h-4 w-4">
-                  <path d="M12 15L7 10l5-5" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </button>
-              <button
-                onClick={() => moveWindow(1)}
-                className="h-8 w-8 grid place-items-center rounded-full border border-gray-200 hover:bg-gray-50"
-                aria-label="Next dates"
-              >
-                <svg viewBox="0 0 20 20" className="h-4 w-4">
-                  <path d="M8 15l5-5-5-5" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </button>
-            </div>
-          </div>
+        {/* Right Arrow */}
+        {visibleStart + daysToShow < dates.length && (
+          <button
+            onClick={() =>
+              setVisibleStart((prev) =>
+                Math.min(prev + daysToShow, dates.length - daysToShow)
+              )
+            }
+            className="absolute top-1/2 -translate-y-1/2 right-[-30px] 
+                       bg-white border border-gray-200 p-3 rounded-full shadow-md 
+                       hover:bg-gray-100 z-20"
+          >
+            <ChevronRight className="w-6 h-6 text-blue-600" />
+          </button>
+        )}
 
-          {/* blue strip of days */}
-          <div className="bg-[#3D63EA] text-white text-[12px]">
-            <div className="grid grid-cols-7">
-              {days.map((d) => (
-                <div key={iso(d)} className="px-4 py-2 text-center font-semibold">
-                  {String(d.getDate()).padStart(2, "0")}/
-                  {String(d.getMonth() + 1).padStart(2, "0")}
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Card container */}
+        <div className="flex gap-5 transition-transform duration-300">
+          {dates
+            .slice(visibleStart, visibleStart + daysToShow)
+            .map((date) => {
+              const localDate = parseLocalYMD(date);
+              return (
+                <div
+                  key={date}
+                  className="flex-1 min-w-[240px] bg-white border border-gray-200 shadow-md 
+                             hover:border-blue-600 hover:shadow-lg transition-all 
+                             p-5 rounded-[20px]"
+                >
+                  {/* Date header */}
+                  <div className="text-center font-semibold text-black mb-2">
+                    {localDate.toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </div>
 
-          {/* events below each day */}
-          <div className="px-2 py-3">
-            <div className="grid grid-cols-7 gap-y-2 text-[12px]">
-              {days.map((d) => {
-                const key = iso(d);
-                const isToday = sameDay(d, today);
-                const isSelected = sameDay(d, selectedDate);
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedDate(d)}
-                    className={[
-                      "min-h-[64px] rounded-md px-2 py-2 text-left transition",
-                      isSelected ? "ring-2 ring-[#3D63EA] bg-blue-50/60" : "hover:bg-gray-50",
-                    ].join(" ")}
-                  >
-                    <div className="flex items-center justify-between text-gray-700">
-                      <span className="font-medium">{dWk(d)}</span>
-                      {isToday && (
-                        <span className="ml-2 inline-block text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
-                          Today
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-1 space-y-1">
-                      {(events[key] || []).map((t, i) => (
+                  {/* Events */}
+                  <div className="space-y-2">
+                    {(events[date] || []).length > 0 ? (
+                      events[date].map((ev, i) => (
                         <div
                           key={i}
-                          className="truncate rounded bg-gray-100 px-2 py-1 text-gray-800"
-                          title={t}
+                          className="flex justify-between items-center bg-blue-50 px-3 py-1 
+                                     text-blue-600 text-sm font-medium rounded border border-blue-100 shadow-sm"
                         >
-                          {t}
+                          <span className="truncate" title={ev}>
+                            {ev}
+                          </span>
+                          <button
+                            onClick={() => removeEvent(date, i)}
+                            className="ml-2 text-blue-600 hover:text-blue-800"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
                         </div>
-                      ))}
-                      <div className="pt-1">
-                        {/* <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openAddForm(d);
-                          }}
-                          className="cursor-pointer text-[11px] text-[#3D63EA] hover:underline"
-                        >
-                          + add
-                        </span> */}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-400 text-sm text-center">
+                        No events
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
-      </section>
+      </div>
 
-      {/* RECENT ACTIVITY FEED */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Recent Activity Feed</h2>
+      {/* Add Event Modal */}
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 bg-white rounded-lg p-6 shadow-lg transform -translate-x-1/2 -translate-y-1/2 w-[400px]">
+            <Dialog.Title className="font-bold text-lg mb-4">
+              Add New Event
+            </Dialog.Title>
 
-        <div className="bg-white rounded-xl shadow-[0_8px_20px_-8px_rgba(0,0,0,0.15)] border border-gray-100">
-          <ul className="p-5 md:p-6 space-y-4">
-            {activity.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-gray-800">
-                <span className="mt-1 h-3 w-3 rounded-full bg-black" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* ADD EVENT MODAL */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/30 p-4">
-          <form
-            onSubmit={addEvent}
-            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl space-y-4"
-          >
-            <h3 className="text-base font-semibold text-gray-900">Add Event</h3>
-
-            <label className="block text-sm">
-              <span className="text-gray-600">Date</span>
-              <input
-                type="date"
-                value={formDate}
-                onChange={(e) => setFormDate(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-[#3D63EA]"
-                required
-              />
-            </label>
-
-            <label className="block text-sm">
-              <span className="text-gray-600">Occasion / Title</span>
-              <input
-                type="text"
-                placeholder="e.g., Electrical Maintenance"
-                value={formTitle}
-                onChange={(e) => setFormTitle(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-[#3D63EA]"
-                required
-              />
-            </label>
-
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium">Select Date</label>
+                <input
+                  type="date"
+                  value={newEventDate}
+                  onChange={(e) => setNewEventDate(e.target.value)}
+                  className="w-full border rounded p-2"
+                  min={formatLocalYMD(startDate)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Event Title</label>
+                <input
+                  type="text"
+                  value={newEventText}
+                  onChange={(e) => setNewEventText(e.target.value)}
+                  className="w-full border rounded p-2"
+                  placeholder="Enter event name"
+                />
+              </div>
               <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-[#3D63EA] text-white hover:bg-blue-600"
+                onClick={addEvent}
+                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
               >
                 Save Event
               </button>
             </div>
-          </form>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
+
+
+
+
