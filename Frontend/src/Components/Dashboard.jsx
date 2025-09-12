@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Calendar1 from "./pages/Calender";
 import MaintenanceAlertsDashboard from "./pages/Mantainence";
 import Upcoming from "./pages/Upcoming";
+import RecentActivityFeed from "./pages/Recent_Activity";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -551,6 +552,7 @@ export default function Dashboard() {
         {/* original components kept */}
         <MaintenanceAlertsDashboard />
         <Calendar1 />
+        <RecentActivityFeed/>
       </div>
     </main>
   );
