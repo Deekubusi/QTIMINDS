@@ -1,235 +1,4 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   PieChart,
-//   Pie,
-//   Cell,
-//   Tooltip,
-//   ResponsiveContainer,
-//   LineChart,
-//   Line,
-//   XAxis,
-//   YAxis,
-//   CartesianGrid,
-//   Legend,
-// } from "recharts";
-
-// export default function Profitibility() {
-//   // Data for Rooms Sharing Pie
-//   const roomsData = [
-//     { name: "Single Sharing", value: 60, color: "#4f8ef7" }, // Blue
-//     { name: "Double Sharing", value: 45, color: "#f3cb5a" }, // Yellow
-//     { name: "Triple Sharing", value: 30, color: "#f8957b" }, // Orange
-//   ];
-
-//   // Data for Expenses Pie
-//   const expensesData = [
-//     { name: "Maintenance", value: 6, color: "#4f8ef7" }, // Blue
-//     { name: "Food", value: 34, color: "#f3cb5a" },       // Yellow
-//     { name: "Salaries", value: 42, color: "#f8957b" },   // Orange
-//     { name: "Utilities", value: 12, color: "#7aff6c" },  // Green
-//     { name: "Other", value: 6, color: "#d8d2cd" },       // Grey
-//   ];
-
-// //nextMonthForecast
-// const [nextMonthForecast, setNextMonthForecast] = useState("₹3,10,000");
-// const [utilityExceededPercent, setUtilityExceededPercent] = useState(20);
-
-
-//   // Line chart data
-//   const lineData = [
-//     { month: "Jan", value: 12 },
-//     { month: "Feb", value: 34 },
-//     { month: "Mar", value: 26 },
-//     { month: "Apr", value: 27 },
-//     { month: "May", value: 58 },
-//     { month: "Jun", value: 48 },
-//     { month: "Jul", value: 42 },
-//     { month: "Aug", value: 46 },
-//     { month: "Sep", value: 65 },
-//     { month: "Oct", value: 66 },
-//   ];
-
-//   // Recent revenue table data
-//   const revenueData = [
-//     {
-//       month: "March 2025",
-//       collected: "₹5,20,000",
-//       expected: "₹2,35,000",
-//       profitPercent: "54%",
-//       netProfit: "$1,46,660",
-//     },
-//     {
-//       month: "April 2025",
-//       collected: "₹4,80,000",
-//       expected: "₹2,50,000",
-//       profitPercent: "48%",
-//       netProfit: "$46,660",
-//     },
-//     {
-//       month: "May 2025",
-//       collected: "₹5,20,000",
-//       expected: "₹2,35,000",
-//       profitPercent: "54%",
-//       netProfit: "$3,46,676",
-//     },
-//     {
-//       month: "June 2025",
-//       collected: "₹5,20,000",
-//       expected: "₹2,35,000",
-//       profitPercent: "54%",
-//       netProfit: "$3,46,981",
-//     },
-//   ];
-
-//   return (
-//     <div className="flex flex-row gap-8 p-8 w-full bg-[#f7f9fc] min-h-screen">
-//       {/* Left Side: Line Chart and Table */}
-//       <div className="flex flex-col flex-1 space-y-10 bg-white p-6 rounded-lg shadow-md">
-//         <h1 className="text-xl font-semibold mb-4">Profitability</h1>
-
-//         {/* Line Chart */}
-//         <div className="w-full h-64">
-//           <ResponsiveContainer width="100%" height="100%">
-//             <LineChart data={lineData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-//               <CartesianGrid strokeDasharray="3 3" />
-//               <XAxis dataKey="month" tick={{ fill: "#999", fontSize: 12 }} />
-//               <YAxis tick={{ fill: "#999", fontSize: 12 }} />
-//               <Tooltip />
-//               <Line
-//                 type="monotone"
-//                 dataKey="value"
-//                 stroke="#a58bfb"
-//                 strokeWidth={3}
-//                 dot={{ stroke: "#4f8ef7", strokeWidth: 2, r: 5 }}
-//                 activeDot={{ r: 7 }}
-//               />
-//             </LineChart>
-//           </ResponsiveContainer>
-//         </div>
-
-//         {/* Recent Monthly Revenue Table */}
-//         <div>
-//           <h2 className="text-sm font-semibold text-gray-700 mb-2">Recent Monthly Revenue</h2>
-//           <div className="overflow-x-auto">
-//             <table className="min-w-full text-sm text-left border border-gray-200">
-//               <thead className="bg-gray-50 text-gray-500">
-//                 <tr>
-//                   <th className="py-2 px-3 border-r border-gray-200">Monthly</th>
-//                   <th className="py-2 px-3 border-r border-gray-200">Revenue Collected</th>
-//                   <th className="py-2 px-3 border-r border-gray-200">Revenue Expected</th>
-//                   <th className="py-2 px-3 border-r border-gray-200">Net Profit</th>
-//                   <th className="py-2 px-3">Profit %</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {revenueData.map((row, idx) => (
-//                   <tr
-//                     key={idx}
-//                     className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
-//                   >
-//                     <td className="py-2 px-3 border-r border-gray-200">{row.month}</td>
-//                     <td className="py-2 px-3 border-r border-gray-200">{row.collected}</td>
-//                     <td className="py-2 px-3 border-r border-gray-200">{row.expected}</td>
-//                     <td className="py-2 px-3 border-r border-gray-200 text-cyan-500 font-semibold">{row.profitPercent}</td>
-//                     <td className="py-2 px-3">{row.netProfit}</td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Right Side: Cards */}
-//       <div className="flex flex-col gap-8 w-96">
-//         {/* Profit Forecast */}
-//         <div className="bg-white p-6 rounded-lg shadow-md text-center">
-//           <p className="text-sm font-semibold text-gray-500 mb-1">Next month profit forecast:</p>
-//           <p className="text-3xl font-extrabold mb-1">{nextMonthForecast}</p>
-//           <p className="text-xs text-gray-600">Utility expenses exceeded by {utilityExceededPercent}%</p>
-//         </div>
-
-//         {/* Analytics By Rooms Sharing */}
-//         <div className="bg-white p-6 rounded-lg shadow-md">
-//           <p className="text-sm font-semibold text-gray-500 mb-4">Analytics By Rooms Sharing</p>
-//           <div className="flex items-center justify-between">
-//             <ResponsiveContainer width={120} height={120}>
-//               <PieChart>
-//                 <Pie
-//                   data={roomsData}
-//                   dataKey="value"
-//                   cx="50%"
-//                   cy="50%"
-//                   innerRadius={35}
-//                   outerRadius={50}
-//                   paddingAngle={4}
-//                   stroke="none"
-//                 >
-//                   {roomsData.map((entry, idx) => (
-//                     <Cell key={`room-${idx}`} fill={entry.color} />
-//                   ))}
-//                 </Pie>
-//               </PieChart>
-//             </ResponsiveContainer>
-
-//             {/* Legend */}
-//             <div className="flex flex-col space-y-2 ml-4 text-sm">
-//               {roomsData.map(({ name, value, color }) => (
-//                 <div key={name} className="flex items-center space-x-2">
-//                   <div
-//                     style={{ backgroundColor: color }}
-//                     className="w-3.5 h-3.5 rounded-full"
-//                   />
-//                   <span className="text-gray-700 opacity-70">{name} - {value}%</span>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Expenses Breakdown */}
-//         <div className="bg-white p-6 rounded-lg shadow-md">
-//           <p className="text-sm font-semibold text-gray-500 mb-4">Expenses Breakdown</p>
-//           <div className="flex items-center justify-between">
-//             <ResponsiveContainer width={120} height={120}>
-//               <PieChart>
-//                 <Pie
-//                   data={expensesData}
-//                   dataKey="value"
-//                   cx="50%"
-//                   cy="50%"
-//                   innerRadius={35}
-//                   outerRadius={50}
-//                   paddingAngle={4}
-//                   stroke="none"
-//                 >
-//                   {expensesData.map((entry, idx) => (
-//                     <Cell key={`expense-${idx}`} fill={entry.color} />
-//                   ))}
-//                 </Pie>
-//               </PieChart>
-//             </ResponsiveContainer>
-
-//             {/* Legend */}
-//             <div className="flex flex-col space-y-2 ml-4 text-sm">
-//               {expensesData.map(({ name, value, color }) => (
-//                 <div key={name} className="flex items-center space-x-2">
-//                   <div
-//                     style={{ backgroundColor: color }}
-//                     className="w-3.5 h-3.5 rounded-full"
-//                   />
-//                   <span className="text-gray-700 opacity-70">{name} - {value}%</span>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -241,9 +10,11 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  Legend,
 } from "recharts";
 
 export default function Profitibility() {
+  // 👉 Keep original colors
   const roomsData = [
     { name: "Single Sharing", value: 60, color: "#4f8ef7" },
     { name: "Double Sharing", value: 45, color: "#f3cb5a" },
@@ -275,271 +46,291 @@ export default function Profitibility() {
   ];
 
   const revenueData = [
-    {
-      month: "March 2025",
-      collected: "₹5,20,000",
-      expected: "₹2,35,000",
-      profitPercent: "54%",
-      netProfit: "$1,46,660",
-    },
-    {
-      month: "April 2025",
-      collected: "₹4,80,000",
-      expected: "₹2,50,000",
-      profitPercent: "48%",
-      netProfit: "$46,660",
-    },
-    {
-      month: "May 2025",
-      collected: "₹5,20,000",
-      expected: "₹2,35,000",
-      profitPercent: "54%",
-      netProfit: "$3,46,676",
-    },
-    {
-      month: "June 2025",
-      collected: "₹5,20,000",
-      expected: "₹2,35,000",
-      profitPercent: "54%",
-      netProfit: "$3,46,981",
-    },
+    { month: "March 2025", collected: "₹5,20,000", expected: "₹2,35,000", profitPercent: "54%", netProfit: "₹1,46,660" },
+    { month: "April 2025", collected: "₹4,80,000", expected: "₹2,50,000", profitPercent: "48%", netProfit: "₹46,660" },
+    { month: "May 2025", collected: "₹5,20,000", expected: "₹2,35,000", profitPercent: "54%", netProfit: "₹3,46,676" },
+    { month: "June 2025", collected: "₹5,20,000", expected: "₹2,35,000", profitPercent: "54%", netProfit: "₹3,46,981" },
   ];
 
-// ... (keep your imports and data)
-
-
-  // same data...
+  // % tooltip helpers
+  const roomsTotal = useMemo(() => roomsData.reduce((s, d) => s + d.value, 0), [roomsData]);
+  const expensesTotal = useMemo(() => expensesData.reduce((s, d) => s + d.value, 0), [expensesData]);
+  const tooltipStyles = {
+    wrapperStyle: { border: "1px solid #e2e8f0", borderRadius: 8 },
+    contentStyle: { background: "rgba(255,255,255,0.98)", border: "none", borderRadius: 8, boxShadow: "0 6px 16px rgba(2,6,23,0.06)" },
+    labelStyle: { color: "#0f172a" },
+    itemStyle: { color: "#334155" },
+  };
+  const makeFormatter = (total) => (value, name) => {
+    const pct = total ? (value / total) * 100 : 0;
+    return [`${value} (${pct.toFixed(1)}%)`, name];
+  };
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 p-8 w-full bg-[#f7f9fc] min-h-screen max-w-screen-xl mx-auto">
-      
-      {/* Left Side */}
-      <div className="flex flex-col flex-1 space-y-10 bg-white p-6 rounded-lg shadow-md min-w-0">
-        <h1 className="text-xl font-semibold mb-4">Profitability</h1>
+    <div className="flex flex-col md:flex-row gap-8 p-8 w-full bg-gradient-to-br from-[#eff6ff] via-[#f7fbff] to-white min-h-screen max-w-screen-xl mx-auto">
+      {/* Left */}
+      <div className="flex flex-col flex-1 space-y-8 bg-white/90 backdrop-blur-sm ring-1 ring-[#dbeafe] p-6 rounded-2xl shadow-sm">
+        {/* Heading */}
+        <header className="mb-2">
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Profitability</h1>
+          <p className="text-sm text-slate-600">Overview of revenue, expenses and room sharing analytics</p>
+        </header>
 
-        {/* Mobile: Donuts stacked vertically */}
-        <div className="space-y-6 md:hidden mb-6">
-          {/* Rooms Donut */}
-          <div>
-            <p className="text-sm font-semibold text-gray-500 mb-2">
-              Analytics By Rooms Sharing
-            </p>
+        {/* Mobile donuts */}
+        <div className="space-y-6 md:hidden">
+          {/* Rooms */}
+          <section className="p-4 rounded-xl border border-[#e5edff] hover:shadow-md transition-all">
+            <h2 className="text-sm font-semibold text-slate-600 mb-2">Analytics By Rooms Sharing</h2>
             <div className="flex items-center">
-              <ResponsiveContainer width={150} height={150}>
+              <ResponsiveContainer width={160} height={160}>
                 <PieChart>
+                  <defs>
+                    <filter id="pieShadow" height="130%">
+                      <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.15" />
+                    </filter>
+                  </defs>
                   <Pie
                     data={roomsData}
                     dataKey="value"
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
+                    innerRadius={48}
                     outerRadius={70}
                     paddingAngle={4}
-                    stroke="none"
+                    stroke="white"
+                    strokeWidth={2}
+                    style={{ filter: "url(#pieShadow)" }}
                   >
-                    {roomsData.map((entry, idx) => (
-                      <Cell key={`room-mobile-${idx}`} fill={entry.color} />
-                    ))}
+                    {roomsData.map((e, i) => <Cell key={i} fill={e.color} />)}
                   </Pie>
+                  <Tooltip
+                    formatter={makeFormatter(roomsTotal)}
+                    wrapperStyle={tooltipStyles.wrapperStyle}
+                    contentStyle={tooltipStyles.contentStyle}
+                    labelStyle={tooltipStyles.labelStyle}
+                    itemStyle={tooltipStyles.itemStyle}
+                  />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="ml-4 text-xs flex flex-col justify-center space-y-1 max-w-[100px]">
+              <div className="ml-4 text-xs flex flex-col gap-1 max-w-[140px]">
                 {roomsData.map(({ name, color }) => (
-                  <div key={name} className="flex items-center space-x-1">
-                    <div
-                      style={{ backgroundColor: color }}
-                      className="w-3.5 h-3.5 rounded-full"
-                    />
-                    <span className="text-gray-700 opacity-70">{name}</span>
+                  <div key={name} className="flex items-center gap-2">
+                    <span className="inline-block w-3.5 h-3.5 rounded-full" style={{ backgroundColor: color }} />
+                    <span className="text-slate-700">{name}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Expenses Donut */}
-          <div>
-            <p className="text-sm font-semibold text-gray-500 mb-2">
-              Expenses Breakdown
-            </p>
+          {/* Expenses */}
+          <section className="p-4 rounded-xl border border-[#e5edff] hover:shadow-md transition-all">
+            <h2 className="text-sm font-semibold text-slate-600 mb-2">Expenses Breakdown</h2>
             <div className="flex items-center">
-              <ResponsiveContainer width={150} height={150}>
+              <ResponsiveContainer width={160} height={160}>
                 <PieChart>
                   <Pie
                     data={expensesData}
                     dataKey="value"
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
+                    innerRadius={48}
                     outerRadius={70}
                     paddingAngle={4}
-                    stroke="none"
+                    stroke="white"
+                    strokeWidth={2}
+                    style={{ filter: "url(#pieShadow)" }}
                   >
-                    {expensesData.map((entry, idx) => (
-                      <Cell key={`expense-mobile-${idx}`} fill={entry.color} />
-                    ))}
+                    {expensesData.map((e, i) => <Cell key={i} fill={e.color} />)}
                   </Pie>
+                  <Tooltip
+                    formatter={makeFormatter(expensesTotal)}
+                    wrapperStyle={tooltipStyles.wrapperStyle}
+                    contentStyle={tooltipStyles.contentStyle}
+                    labelStyle={tooltipStyles.labelStyle}
+                    itemStyle={tooltipStyles.itemStyle}
+                  />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="ml-4 text-xs flex flex-col justify-center space-y-1 max-w-[100px]">
+              <div className="ml-4 text-xs flex flex-col gap-1 max-w-[140px]">
                 {expensesData.map(({ name, color }) => (
-                  <div key={name} className="flex items-center space-x-1">
-                    <div
-                      style={{ backgroundColor: color }}
-                      className="w-3.5 h-3.5 rounded-full"
-                    />
-                    <span className="text-gray-700 opacity-70">{name}</span>
+                  <div key={name} className="flex items-center gap-2">
+                    <span className="inline-block w-3.5 h-3.5 rounded-full" style={{ backgroundColor: color }} />
+                    <span className="text-slate-700">{name}</span>
                   </div>
                 ))}
               </div>
             </div>
+          </section>
+        </div>
+
+        {/* Line chart */}
+        <section className="w-full h-72 p-4 rounded-xl border border-[#e5edff] hover:shadow-md transition-all">
+          <h2 className="text-sm font-semibold text-slate-600 mb-3">Monthly Revenue Trend</h2>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={lineData} margin={{ top: 10, right: 20, left: -24, bottom: 8 }}>
+              <defs>
+                <linearGradient id="revGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#93C5FD" />
+                  <stop offset="100%" stopColor="#2563EB" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 12 }} />
+              <YAxis tick={{ fill: "#64748b", fontSize: 12 }} />
+              <Tooltip
+                wrapperStyle={tooltipStyles.wrapperStyle}
+                contentStyle={tooltipStyles.contentStyle}
+                labelStyle={tooltipStyles.labelStyle}
+                itemStyle={tooltipStyles.itemStyle}
+              />
+              <Legend />
+              <Line
+                name="Revenue Index"
+                type="monotone"
+                dataKey="value"
+                stroke="url(#revGradient)"
+                strokeWidth={3}
+                dot={{ stroke: "#2563EB", strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </section>
+
+        {/* ⬇️ Improved Table */}
+        <section>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-base font-semibold text-slate-800">Recent Monthly Revenue</h2>
+            <span className="text-xs px-2 py-1 rounded-full bg-[#eaf2ff] text-[#2563EB] font-medium">
+              Latest 4 months
+            </span>
           </div>
-        </div>
 
-        
-    {/* Line Chart */}
-<div className="w-full h-72">
-  <h2 className="text-sm font-semibold text-gray-700 mb-3">Monthly Revenue Trend</h2>
-  <ResponsiveContainer width="100%" height="100%">
-    <LineChart
-      data={lineData}
-      margin={{ top: 5, right: 30, left: -32, bottom: 20 }} 
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="month" tick={{ fill: "#999", fontSize: 12 }} />
-      <YAxis tick={{ fill: "#999", fontSize: 12 }} />
-      <Tooltip />
-      <Line
-        type="monotone"
-        dataKey="value"
-        stroke="#a58bfb"
-        strokeWidth={3}
-        dot={{ stroke: "#4f8ef7", strokeWidth: 2, r: 5 }}
-        activeDot={{ r: 7 }}
-      />
-    </LineChart>
-  </ResponsiveContainer>
-</div>
-
-        {/* Recent Monthly Revenue Table */}
-        <div className="overflow-x-auto">
-          <h2 className="text-sm font-semibold text-gray-700 mb-2 ml-1">
-            Recent Monthly Revenue
-          </h2>
-          <table className="min-w-full text-sm text-left border border-gray-200">
-            <thead className="bg-gray-50 text-gray-500">
-              <tr>
-                <th className="py-2 px-3 border-r border-gray-200">Monthly</th>
-                <th className="py-2 px-3 border-r border-gray-200">
-                  Revenue Collected
-                </th>
-                <th className="py-2 px-3 border-r border-gray-200">
-                  Revenue Expected
-                </th>
-                <th className="py-2 px-3 border-r border-gray-200">Net Profit</th>
-                <th className="py-2 px-3">Profit %</th>
-              </tr>
-            </thead>
-            <tbody>
-              {revenueData.map((row, idx) => (
-                <tr
-                  key={idx}
-                  className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                >
-                  <td className="py-2 px-3 border-r border-gray-200">{row.month}</td>
-                  <td className="py-2 px-3 border-r border-gray-200">{row.collected}</td>
-                  <td className="py-2 px-3 border-r border-gray-200">{row.expected}</td>
-                  <td className="py-2 px-3 border-r border-gray-200 text-cyan-500 font-semibold">
-                    {row.profitPercent}
-                  </td>
-                  <td className="py-2 px-3">{row.netProfit}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <div className="overflow-hidden rounded-2xl ring-1 ring-[#e5edff] shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-left">
+                <thead className="sticky top-0 bg-[#f5f9ff] text-slate-700/90 uppercase text-xs tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Month</th>
+                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Revenue Collected</th>
+                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Revenue Expected</th>
+                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Net Profit</th>
+                    <th className="py-3.5 px-4 border-b border-[#e5edff] text-right">Profit %</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#eef3ff]">
+                  {revenueData.map((row, idx) => (
+                    <tr
+                      key={idx}
+                      className="bg-white hover:bg-[#f0f6ff] transition-colors"
+                    >
+                      <td className="py-3 px-4 font-medium text-slate-800">{row.month}</td>
+                      <td className="py-3 px-4 text-slate-700">{row.collected}</td>
+                      <td className="py-3 px-4 text-slate-700">{row.expected}</td>
+                      <td className="py-3 px-4 font-semibold text-[#2563EB]">{row.netProfit}</td>
+                      <td className="py-3 px-4 text-right">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#eaf2ff] text-[#1d4ed8] font-semibold">
+                          {row.profitPercent}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              
+              </table>
+            </div>
+          </div>
+        </section>
       </div>
 
-      {/* Right Side - desktop only */}
-      <div className="hidden md:flex flex-col gap-10 w-96">
-        {/* Profit Forecast - HIDDEN on mobile */}
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <p className="text-sm font-semibold text-gray-500 mb-1">
-            Next month profit forecast:
-          </p>
-          <p className="text-3xl font-extrabold mb-1">{nextMonthForecast}</p>
-          <p className="text-xs text-gray-600">
-            Utility expenses exceeded by {utilityExceededPercent}%
+      {/* Right (desktop) */}
+      <div className="hidden md:flex flex-col gap-6 w-96">
+        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl text-center shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-600 mb-1">Next month profit forecast</h3>
+          <p className="text-3xl font-extrabold mb-1 tracking-tight text-slate-900">{nextMonthForecast}</p>
+          <p className="text-xs text-slate-600">
+            Utility expenses exceeded by <span className="font-semibold text-[#2563EB]">{utilityExceededPercent}%</span>
           </p>
         </div>
 
-        {/* Donuts shown on desktop on right */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p className="text-sm font-semibold text-gray-500 mb-2">
-            Analytics By Rooms Sharing
-          </p>
-          <ResponsiveContainer width="100%" height={150}>
+        {/* Rooms pie */}
+        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-600 mb-2">Analytics By Rooms Sharing</h3>
+          <ResponsiveContainer width="100%" height={170}>
             <PieChart>
+              <defs>
+                <filter id="pieShadowDesk" height="130%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.15" />
+                </filter>
+              </defs>
               <Pie
                 data={roomsData}
                 dataKey="value"
                 cx="50%"
                 cy="50%"
-                innerRadius={45}
-                outerRadius={70}
+                innerRadius={52}
+                outerRadius={78}
                 paddingAngle={4}
-                stroke="none"
+                stroke="white"
+                strokeWidth={2}
+                style={{ filter: "url(#pieShadowDesk)" }}
               >
-                {roomsData.map((entry, idx) => (
-                  <Cell key={`room-desktop-${idx}`} fill={entry.color} />
-                ))}
+                {roomsData.map((e, i) => <Cell key={i} fill={e.color} />)}
               </Pie>
+              <Tooltip
+                formatter={makeFormatter(roomsTotal)}
+                wrapperStyle={tooltipStyles.wrapperStyle}
+                contentStyle={tooltipStyles.contentStyle}
+                labelStyle={tooltipStyles.labelStyle}
+                itemStyle={tooltipStyles.itemStyle}
+              />
             </PieChart>
           </ResponsiveContainer>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2 text-xs">
             {roomsData.map(({ name, color }) => (
-              <div key={name} className="flex items-center space-x-1 text-xs">
-                <div
-                  style={{ backgroundColor: color }}
-                  className="w-3 h-3 rounded-full"
-                />
-                <span className="text-gray-700 opacity-70">{name}</span>
-              </div>
+              <span key={name} className="inline-flex items-center gap-2">
+                <i className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: color }} />
+                <span className="text-slate-700">{name}</span>
+              </span>
             ))}
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p className="text-sm font-semibold text-gray-500 mb-2">
-            Expenses Breakdown
-          </p>
-          <ResponsiveContainer width="100%" height={150}>
+        {/* Expenses pie */}
+        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-600 mb-2">Expenses Breakdown</h3>
+          <ResponsiveContainer width="100%" height={170}>
             <PieChart>
               <Pie
                 data={expensesData}
                 dataKey="value"
                 cx="50%"
                 cy="50%"
-                innerRadius={45}
-                outerRadius={70}
+                innerRadius={52}
+                outerRadius={78}
                 paddingAngle={4}
-                stroke="none"
+                stroke="white"
+                strokeWidth={2}
+                style={{ filter: "url(#pieShadowDesk)" }}
               >
-                {expensesData.map((entry, idx) => (
-                  <Cell key={`expense-desktop-${idx}`} fill={entry.color} />
-                ))}
+                {expensesData.map((e, i) => <Cell key={i} fill={e.color} />)}
               </Pie>
+              <Tooltip
+                formatter={makeFormatter(expensesTotal)}
+                wrapperStyle={tooltipStyles.wrapperStyle}
+                contentStyle={tooltipStyles.contentStyle}
+                labelStyle={tooltipStyles.labelStyle}
+                itemStyle={tooltipStyles.itemStyle}
+              />
             </PieChart>
           </ResponsiveContainer>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2 text-xs">
             {expensesData.map(({ name, color }) => (
-              <div key={name} className="flex items-center space-x-1 text-xs">
-                <div
-                  style={{ backgroundColor: color }}
-                  className="w-3 h-3 rounded-full"
-                />
-                <span className="text-gray-700 opacity-70">{name}</span>
-              </div>
+              <span key={name} className="inline-flex items-center gap-2">
+                <i className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: color }} />
+                <span className="text-slate-700">{name}</span>
+              </span>
             ))}
           </div>
         </div>
