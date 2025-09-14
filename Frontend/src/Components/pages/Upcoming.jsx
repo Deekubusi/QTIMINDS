@@ -113,16 +113,11 @@ const FeedbackBadge = ({ value = "" }) => {
     : "bg-rose-50 text-rose-800";
 
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${pill}`}
-    >
-      <Icon className="h-5 w-5" /> {/* Change size here */}
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${pill}`}>
+      <Icon className="h-5 w-5" />
     </span>
   );
 };
-
-
-
 
 // Uniform header
 const HeaderCell = ({ icon: Icon, text }) => (
@@ -193,149 +188,156 @@ export default function CheckInOutSection() {
 
   return (
     <section className="mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* =================== CHECK-IN =================== */}
-        <div className="bg-white border rounded-2xl overflow-hidden shadow-sm border-[#0041BA]/25">
-          <div className={`flex items-center justify-between px-5 py-3 text-white ${headerGradient}`}>
-            <div className="flex items-center gap-2 font-semibold">
-              <Calendar className="h-5 w-5" />
+        <div className="flex flex-col">
+          {/* Header OUTSIDE the card */}
+          <div className="flex items-center justify-between mb-2">
+             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Calendar className="ml-5 h-6 w-6 text-[#0041BA]" />
               <span>Upcoming Check-Ins</span>
-            </div>
-            <button
-              onClick={() => setInOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-sm"
-              title="Add upcoming check-in"
+            </h2>
+           <button
+               onClick={() => setInOpen(true)}
+              className="ml-1 px-3 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 inline-flex items-center gap-2"
             >
-              <Plus className="h-4 w-4" /> Add Check-In
+              <Plus className="h-4 w-4" />
+              Add Check-in
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left">
-              <thead className="bg-[#0041BA]/5">
-                <tr className="h-14">
-                  <HeaderCell icon={UserCircleIcon} text="Guest" />
-                  <HeaderCell icon={HomeModernIcon} text="Room/Bed" />
-                  <HeaderCell icon={CalendarDaysIcon} text="Date" />
-                  <HeaderCell icon={IndianRupee} text="Payment" />
-                  <HeaderCell icon={DocumentTextIcon} text="Notes" />
-                </tr>
-              </thead>
-
-              <tbody className="text-sm">
-                {(showAllIn ? inRows : inRows.slice(0, 4)).map((row, i) => (
-                  <tr
-                    key={i}
-                    className="h-[56px] border-b last:border-0 odd:bg-white even:bg-[#0041BA]/3 hover:bg-[#0041BA]/8 transition-colors"
-                  >
-                    <td className="px-4 py-3 font-medium text-gray-900">{row[0]}</td>
-                    <td className="px-4 py-3 text-gray-800">{row[1]}</td>
-                    <td className="px-4 py-3">
-                      <DateChip value={formatDateToDDMMYY(row[2])} />
-                    </td>
-                   <td className="px-4 py-3">
-  <div className="inline-flex mt-0.5"> {/* ↓ nudge down ~2px */}
-    <PayBadge value={row[3]} />
-  </div>
-</td>
-
-                    <td className="px-4 py-3 text-gray-700">{row[4]}</td>
+          {/* Card WITHOUT the title/add button */}
+          <div className="bg-white border rounded-2xl overflow-hidden shadow-sm border-[#0041BA]/25">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left">
+                <thead className="bg-[#0041BA]/5">
+                  <tr className="h-14">
+                    <HeaderCell icon={UserCircleIcon} text="Guest" />
+                    <HeaderCell icon={HomeModernIcon} text="Room/Bed" />
+                    <HeaderCell icon={CalendarDaysIcon} text="Date" />
+                    <HeaderCell icon={IndianRupee} text="Payment" />
+                    <HeaderCell icon={DocumentTextIcon} text="Notes" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
 
-          <div className="px-4 py-3 flex items-center justify-between">
-            <button
-              className="text-[#0041BA] font-medium hover:underline flex items-center"
-              onClick={() => setShowAllIn((v) => !v)}
-            >
-              {showAllIn ? (
-                <>
-                  View less
-                  <ChevronDoubleUpIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
-                </>
-              ) : (
-                <>
-                  View more ({Math.max(inRows.length - 4, 0)})
-                  <ChevronDoubleDownIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
-                </>
-              )}
-            </button>
+                <tbody className="text-sm">
+                  {(showAllIn ? inRows : inRows.slice(0, 4)).map((row, i) => (
+                    <tr
+                      key={i}
+                      className="h-[56px] border-b last:border-0 odd:bg-white even:bg-[#0041BA]/3 hover:bg-[#0041BA]/8 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-900">{row[0]}</td>
+                      <td className="px-4 py-3 text-gray-800">{row[1]}</td>
+                      <td className="px-4 py-3">
+                        <DateChip value={formatDateToDDMMYY(row[2])} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="inline-flex mt-0.5">
+                          <PayBadge value={row[3]} />
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">{row[4]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-4 py-3 flex items-center justify-between">
+              <button
+                className="text-[#0041BA] font-medium hover:underline flex items-center"
+                onClick={() => setShowAllIn((v) => !v)}
+              >
+                {showAllIn ? (
+                  <>
+                    View less
+                    <ChevronDoubleUpIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                  </>
+                ) : (
+                  <>
+                    View more ({Math.max(inRows.length - 4, 0)})
+                    <ChevronDoubleDownIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* =================== CHECK-OUT =================== */}
-        <div className="bg-white border rounded-2xl overflow-hidden shadow-sm border-[#0041BA]/25">
-          <div className={`flex items-center justify-between px-5 py-3 text-white ${headerGradient}`}>
-            <div className="flex items-center gap-2 font-semibold">
-              <Calendar className="h-5 w-5" />
+        <div className="flex flex-col">
+          {/* Header OUTSIDE the card */}
+          <div className="flex items-center justify-between mb-2">
+             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Calendar className=" ml-6 h-6 w-6 text-[#0041BA]" />
               <span>Upcoming Check-Outs</span>
-            </div>
+            </h2>
             <button
               onClick={() => setOutOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg.white/10 hover:bg-white/20 transition text-sm"
-              title="Add upcoming check-out"
+              className="ml-1 px-3 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 inline-flex items-center gap-2"
             >
-              <Plus className="h-4 w-4" /> Add Check-Out
+              <Plus className="h-4 w-4" />
+              Add Check-Out
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left">
-              <thead className="bg-[#0041BA]/5">
-                <tr className="h-14">
-                  <HeaderCell icon={UserCircleIcon} text="Guest" />
-                  <HeaderCell icon={HomeModernIcon} text="Room/Bed" />
-                  <HeaderCell icon={CalendarDaysIcon} text="Date" />
-                  <HeaderCell icon={IndianRupee} text="Due" />
-                  <HeaderCell icon={ChatBubbleLeftRightIcon} text="Feedback" />
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-
-              <tbody className="text-sm">
-                {(showAllOut ? outRows : outRows.slice(0, 4)).map((row, i) => (
-                  <tr
-                    key={i}
-                    className="h-[56px] border-b last:border-0 odd:bg-white even:bg-[#0041BA]/3 hover:bg-[#0041BA]/8 transition-colors"
-                  >
-                    <td className="px-4 py-3 font-medium text-gray-900">{row[0]}</td>
-                    <td className="px-4 py-3 text-gray-800">{row[1]}</td>
-                    <td className="px-4 py-3">
-                      <DateChip value={formatDateToDDMMYY(row[2])} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge tone={row[3] === "₹0" ? "ok" : "bad"}>{row[3]}</Badge>
-                    </td>
-                    <td className="px-4 py-3 flex items-center">
-                      <FeedbackBadge value={row[4]} />
-                    </td>
-                    <td className="px-4 py-3" />
+          {/* Card WITHOUT the title/add button */}
+          <div className="bg-white border rounded-2xl overflow-hidden shadow-sm border-[#0041BA]/25">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left">
+                <thead className="bg-[#0041BA]/5">
+                  <tr className="h-14">
+                    <HeaderCell icon={UserCircleIcon} text="Guest" />
+                    <HeaderCell icon={HomeModernIcon} text="Room/Bed" />
+                    <HeaderCell icon={CalendarDaysIcon} text="Date" />
+                    <HeaderCell icon={IndianRupee} text="Due" />
+                    <HeaderCell icon={ChatBubbleLeftRightIcon} text="Feedback" />
+                    <th className="px-4 py-3" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
 
-          <div className="px-4 py-3 flex items-center justify-between">
-            <button
-              className="text-[#0041BA] font-medium hover:underline flex items-center"
-              onClick={() => setShowAllOut((v) => !v)}
-            >
-              {showAllOut ? (
-                <>
-                  View less
-                  <ChevronDoubleUpIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
-                </>
-              ) : (
-                <>
-                  View more ({Math.max(outRows.length - 4, 0)})
-                  <ChevronDoubleDownIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
-                </>
-              )}
-            </button>
+                <tbody className="text-sm">
+                  {(showAllOut ? outRows : outRows.slice(0, 4)).map((row, i) => (
+                    <tr
+                      key={i}
+                      className="h-[56px] border-b last:border-0 odd:bg-white even:bg-[#0041BA]/3 hover:bg-[#0041BA]/8 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-900">{row[0]}</td>
+                      <td className="px-4 py-3 text-gray-800">{row[1]}</td>
+                      <td className="px-4 py-3">
+                        <DateChip value={formatDateToDDMMYY(row[2])} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge tone={row[3] === "₹0" ? "ok" : "bad"}>{row[3]}</Badge>
+                      </td>
+                      <td className="px-4 py-3 flex items-center">
+                        <FeedbackBadge value={row[4]} />
+                      </td>
+                      <td className="px-4 py-3" />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-4 py-3 flex items-center justify-between">
+              <button
+                className="text-[#0041BA] font-medium hover:underline flex items-center"
+                onClick={() => setShowAllOut((v) => !v)}
+              >
+                {showAllOut ? (
+                  <>
+                    View less
+                    <ChevronDoubleUpIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                  </>
+                ) : (
+                  <>
+                    View more ({Math.max(outRows.length - 4, 0)})
+                    <ChevronDoubleDownIcon className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
