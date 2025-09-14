@@ -270,7 +270,7 @@ export default function MaintenanceAlertsDashboard() {
         {/* ---------- Alerts header (outside the card) ---------- */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <BellRing className="h-5 w-5 text-rose-500" />
               Critical Alerts &amp; Reminders
             </h2>
