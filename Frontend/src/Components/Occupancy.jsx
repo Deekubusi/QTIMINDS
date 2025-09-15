@@ -1,369 +1,425 @@
 import React, { useState } from "react";
 import {
-  PieChart,
-  Pie,
-  Cell,
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+  RadialBarChart,
+  RadialBar,
+  Rectangle,
 } from "recharts";
+import { ArrowLeft } from "lucide-react";
 
-export default function OccupancyDashboard() {
-  const totalBeds = 53;
-  const occupiedBeds = 44;
-  const occupancyPercent = Math.round((occupiedBeds / totalBeds) * 100);
+// ---------- Reusable UI Components ----------
+const Card = ({ children, className }) => (
+  <div
+    className={`bg-white rounded-2xl p-6 shadow-[8px_8px_8px_0px_rgba(0,0,0,0.25)] ${className}`}
+  >
+    {children}
+  </div>
+);
 
-  const forecast = {
-    percent: 82,
-    booked: 44,
-    total: 53,
-    changePercent: 10,
-  };
+const CardHeader = ({ children, className }) => (
+  <div className={`mb-2 flex justify-between items-center ${className}`}>
+    {children}
+  </div>
+);
+const CardTitle = ({ children, className }) => (
+  <h2 className={`text-lg font-semibold text-gray-800 ${className}`}>{children}</h2>
+);
+const CardContent = ({ children }) => <div>{children}</div>;
 
-  const roomsData = [
-    { name: "Single Sharing", value: 50, color: "#4F6BE3" },
-    { name: "Double sharing", value: 30, color: "#FFD66B" },
-    { name: "Triple sharing", value: 20, color: "#FF6F61" },
+const Button = ({ children, active, ...props }) => (
+  <button
+    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+      active
+        ? "bg-blue-600 text-white"
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+    }`}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
+// ---------- Main Page ----------
+export default function OccupancyPage() {
+  const [duration, setDuration] = useState("month");
+  const [filter, setFilter] = useState("all");
+
+  const occupancyCount = { occupied: 30, total: 53 };
+  const occupancyPercent = Math.round(
+    (occupancyCount.occupied / occupancyCount.total) * 100
+  );
+
+  // Donut Data
+  const categoryData = [
+    { name: "Single sharing", value: 50, color: "#3b82f6" },
+    { name: "Double sharing", value: 20, color: "#facc15" },
+    { name: "Triple sharing", value: 10, color: "#fb7185" },
   ];
 
-  const [selectedDuration, setSelectedDuration] = useState("monthly");
-
-  const dataSets = {
-    monthly: [
-      { week: "Week 1", value: 12 },
-      { week: "Week 2", value: 34 },
-      { week: "Week 3", value: 26 },
-      { week: "Week 4", value: 27 },
+  // Bar Chart Data
+  const durationOptions = {
+    month: [
+      { label: "Week 1", value: 40 },
+      { label: "Week 2", value: 55 },
+      { label: "Week 3", value: 62 },
+      { label: "Week 4", value: 70 },
     ],
-    quarterly: [
-      { month: "Jan", value: 15 },
-      { month: "Feb", value: 30 },
-      { month: "Mar", value: 25 },
-      { month: "Apr", value: 40 },
-      { month: "May", value: 50 },
-      { month: "Jun", value: 60 },
+    quarter: [
+      { label: "Apr", value: 50 },
+      { label: "May", value: 55 },
+      { label: "Jun", value: 65 },
+      { label: "Jul", value: 62 },
+      { label: "Aug", value: 67 },
+      { label: "Sep", value: 72 },
     ],
-    yearly: [
-      { month: "Jan", value: 10 },
-      { month: "Feb", value: 20 },
-      { month: "Mar", value: 30 },
-      { month: "Apr", value: 40 },
-      { month: "May", value: 50 },
-      { month: "Jun", value: 60 },
-      { month: "Jul", value: 55 },
-      { month: "Aug", value: 65 },
-      { month: "Sep", value: 70 },
-      { month: "Oct", value: 75 },
-      { month: "Nov", value: 80 },
-      { month: "Dec", value: 90 },
+    year: [
+      { label: "Jan", value: 48 },
+      { label: "Feb", value: 50 },
+      { label: "Mar", value: 52 },
+      { label: "Apr", value: 55 },
+      { label: "May", value: 58 },
+      { label: "Jun", value: 60 },
+      { label: "Jul", value: 62 },
+      { label: "Aug", value: 64 },
+      { label: "Sep", value: 67 },
+      { label: "Oct", value: 70 },
+      { label: "Nov", value: 72 },
+      { label: "Dec", value: 75 },
     ],
   };
 
-  const occupancyTableData = [
+  // Table Data
+  const allBeds = [
     {
-      roomId: 101,
-      bedId: "A",
+      room: "101",
+      bed: "A",
       status: "Occupied",
       guest: "Rohan Gupta",
-      in: "01 Jul, 2025",
-      out: "20 Sep, 2025",
-      rent: "₹ 8,000",
+      checkin: "01 July, 2025",
+      checkout: "20 Sep, 2025",
+      rent: "8,000",
     },
     {
-      roomId: 101,
-      bedId: "B",
+      room: "101",
+      bed: "B",
       status: "Vacant",
       guest: "-",
-      in: "-",
-      out: "-",
-      rent: "₹ 8,000",
+      checkin: "-",
+      checkout: "-",
+      rent: "8,000",
     },
     {
-      roomId: 101,
-      bedId: "A",
-      status: "Occupied",
-      guest: "Rohan Gupta",
-      in: "01 Jul, 2025",
-      out: "20 Sep, 2025",
-      rent: "₹ 8,000",
-    },
-    {
-      roomId: 101,
-      bedId: "A",
-      status: "Occupied",
-      guest: "Rohan Gupta",
-      in: "01 Jul, 2025",
-      out: "20 Sep, 2025",
-      rent: "₹ 8,000",
-    },
-    {
-      roomId: 101,
-      bedId: "A",
-      status: "Occupied",
-      guest: "Rohan Gupta",
-      in: "01 Jul, 2025",
-      out: "20 Sep, 2025",
-      rent: "₹ 8,000",
+      room: "102",
+      bed: "A",
+      status: "Reserved",
+      guest: "Sharath Kumar",
+      checkin: "01 Aug, 2025",
+      checkout: "-",
+      rent: "8,000",
     },
   ];
+  const filteredBeds =
+    filter === "all"
+      ? allBeds
+      : allBeds.filter((b) => b.status.toLowerCase() === filter);
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white border border-gray-300 p-3 rounded shadow-md text-gray-700">
-          <p className="font-semibold mb-1">{label}</p>
-          <p className="text-purple-400">Value: {payload[0].value}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  return (
+    <div className="min-h-screen bg-[#E7EFF7] p-6 lg:p-10">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-800">
+          Occupancy
+        </h1>
+        <button className="flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-200">
+          <ArrowLeft size={16} /> Back
+        </button>
+      </div>
 
-  // Reusable Donut Card
-  const DonutCard = ({ title, pieData, children }) => (
-    <div
-      className="bg-white rounded-2xl shadow-lg p-4 flex items-center gap-6 hover:shadow-xl transition-shadow duration-300"
-      style={{ minHeight: 130 }}
-    >
-      <div style={{ width: 120, height: 120 }}>
+      {/* Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  {/* Radial Occupancy Card */}
+<Card className="relative w-full h-67 overflow-hidden border border-gray-200 
+    hover:border-blue-500 ">
+  {/* Rotating Pie chart */}
+  <div className="absolute top-[48px] left-0 w-48 h-44 animate-spin-slow mt-4">
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
+        <Pie
+          data={[
+            { name: "occupied", value: occupancyPercent },
+            { name: "remaining", value: 100 - occupancyPercent },
+          ]}
+          cx="50%"
+          cy="50%"
+          innerRadius="70%"
+          outerRadius="90%"
+          startAngle={0}
+          endAngle={360}
+          dataKey="value"
+          paddingAngle={0}
+        >
+          <Cell fill="#5B93FF" />
+          <Cell fill="#D5F8FF" />
+        </Pie>
+      </PieChart>
+    </ResponsiveContainer>
+
+    {/* Center text */}
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="text-xl font-extrabold font-['Inter'] text-black">
+        {occupancyCount.occupied}/{occupancyCount.total}
+      </div>
+    </div>
+  </div>
+
+  {/* Title */}
+  <div className="absolute top-6 left-7 text-lg font-semibold font-['Poppins'] text-black">
+    Occupancy by Bed
+  </div>
+
+  {/* Subtext */}
+  <div className="absolute top-[65px] left-[248px] text-xl font-bold font-['Inter'] text-black mt-4">
+    {occupancyCount.occupied} of {occupancyCount.total} beds occupied
+  </div>
+
+  {/* Percentage */}
+  <div className="absolute top-[101px] left-[312px] text-5xl font-extrabold font-['Inter'] text-black mt-4">
+    {occupancyPercent}%
+  </div>
+
+  {/* Monthly Change */}
+  <div className="absolute top-[165px] left-[269px] text-xl font-normal font-['Inter'] text-green-600 mt-4">
+    +5% since last month
+  </div>
+
+  {/* Highlight background */}
+  <div className="absolute top-6 left-3 w-50 h-7 bg-sky-600 opacity-10 rounded-[10px] backdrop-blur-[2px]" />
+</Card>
+
+
+
+      
+       {/* Category Donut Card */}
+<Card className="relative w-full h-67 border border-gray-200 hover:border-blue-500">
+  {/* Highlight background */}
+  <div className="absolute top-6 left-3 w-62 h-7 bg-sky-600 opacity-10 rounded-[10px] backdrop-blur-[2px]" />
+
+  <CardHeader>
+    <CardTitle>Occupancy by Category</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="mt-4 flex gap-6 items-center">
+      <div className="w-40 h-40">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={pieData}
-              dataKey="value"
+              data={categoryData}
               cx="50%"
               cy="50%"
-              innerRadius={40}
-              outerRadius={55}
-              paddingAngle={4}
-              stroke="none"
+              innerRadius="70%"
+              outerRadius="90%"
+              dataKey="value"
+              paddingAngle={0}
             >
-              {pieData.map((entry, idx) => (
-                <Cell key={`cell-${idx}`} fill={entry.color} />
+              {categoryData.map((entry, idx) => (
+                <Cell
+                  key={`cell-${idx}`}
+                  fill={entry.color}
+                  stroke="none"
+                />
               ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex flex-col flex-grow justify-center">
-        <h3 className="font-semibold mb-2 text-lg">{title}</h3>
-        {children}
+      <div className="flex-1">
+        <ul className="space-y-3">
+          {categoryData.map((c, i) => (
+            <li key={i} className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span
+                  className="w-3 h-3 rounded-full inline-block"
+                  style={{ backgroundColor: c.color }}
+                />
+                <div className="text-sm text-gray-700">{c.name}</div>
+              </div>
+              <div className="text-sm font-semibold text-gray-800">
+                {c.value}%
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
-  );
+  </CardContent>
+</Card>
 
-  return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-      <h1
-        className="font-extrabold text-black"
-        style={{ fontSize: "clamp(1rem, 2.6vw, 1.6rem)" }}
+
+    {/* Duration Bar Chart */}
+<Card className="relative w-full h-67 border border-gray-200 hover:border-blue-500">
+  {/* Highlight background */}
+  <div className="absolute top-6 left-3 w-62 h-7 bg-sky-600 opacity-10 rounded-[10px] backdrop-blur-[2px]" />
+
+  <CardHeader>
+    <CardTitle>Occupancy by Duration</CardTitle>
+    <div className="flex gap-2">
+      <Button
+        active={duration === "month"}
+        onClick={() => setDuration("month")}
       >
-        Occupancy
-      </h1>
+        Month
+      </Button>
+      <Button
+        active={duration === "quarter"}
+        onClick={() => setDuration("quarter")}
+      >
+        Quarter
+      </Button>
+      <Button
+        active={duration === "year"}
+        onClick={() => setDuration("year")}
+      >
+        Year
+      </Button>
+    </div>
+  </CardHeader>
 
-      {/* Donut Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <DonutCard
-          title="Current Occupancy"
-          pieData={[
-            { name: "Occupied", value: occupancyPercent, color: "#4057BD" },
-            { name: "Vacant", value: 100 - occupancyPercent, color: "#FFC107" },
-          ]}
-        >
-          <p className="text-3xl font-bold">{occupancyPercent}%</p>
-          <p className="text-gray-600 mt-1">
-            {occupiedBeds} of {totalBeds} beds occupied
-          </p>
-        </DonutCard>
+  <CardContent>
+    <div style={{ width: "100%", height: 200 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={durationOptions[duration]} barCategoryGap="40%">
+          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+          <XAxis dataKey="label" tick={{ fill: "#64748b" }} />
+          <YAxis tick={{ fill: "#64748b" }} />
+          {/* <Tooltip /> */}
+          <Bar
+            dataKey="value"
+            fill="#3b82f6"
+            radius={[6, 6, 0, 0]}
+            barSize={20}
+            activeBar={false}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </CardContent>
+</Card>
 
-        <DonutCard
-          title="Next Month Forecast"
-          pieData={[
-            { name: "Booked", value: forecast.percent, color: "#4057BD" },
-            { name: "Available", value: 100 - forecast.percent, color: "#FFC107" },
-          ]}
-        >
-          <p className="text-3xl font-bold text-purple-700">
-            {forecast.percent}%
-          </p>
-          <p className="text-gray-600 mt-1">
-            {forecast.booked} out of {forecast.total} beds booked
-          </p>
-          <div
-            className={`mt-2 flex items-center gap-2 ${
-              forecast.changePercent >= 0 ? "text-green-600" : "text-red-600"
-            } font-semibold`}
-          >
-            {forecast.changePercent >= 0 ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 15l7-7 7 7"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            )}
-            <span>{Math.abs(forecast.changePercent)}% vs last month</span>
+
+        {/* Forecast Card */}
+        <Card className="w-full h-67 relative border border-gray-200 
+       hover:border-blue-500 ">
+          <div className="absolute top-6 left-5 w-[236px] h-[29px] bg-[#0068DD] opacity-10 rounded-lg blur-[2px]" />
+          <CardTitle className="text-lg font-semibold text-black mb-4">
+            Occupancy by Forecast
+          </CardTitle>
+          <div className="h-full flex flex-col items-center justify-start text-center px-3 mt-10">
+            <p className="text-xl font-bold text-black">
+              Next month projected Occupancy:
+            </p>
+            <div className="text-5xl font-extrabold text-black mt-2">90%</div>
+            <p className="text-lg font-medium text-black mt-4">
+              48 out of 53 beds booked.
+            </p>
           </div>
-        </DonutCard>
-
-        <DonutCard title="Category Occupancy" pieData={roomsData}>
-          <div className="flex flex-col space-y-1">
-            {roomsData.map(({ name, value, color }, i) => (
-              <div key={i} className="flex items-center space-x-3">
-                <span
-                  className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: color }}
-                />
-                <span className="font-medium text-gray-700">
-                  {name} - {value}%
-                </span>
-              </div>
-            ))}
-          </div>
-        </DonutCard>
+        </Card>
       </div>
 
-      {/* Occupancy by Duration */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
-          <h3
-            className="font-semibold flex items-center gap-2 text-lg"
-            style={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
-          >
-            Occupancy by Duration
-          </h3>
-
-          <div className="grid grid-cols-3 gap-2 sm:flex sm:space-x-4 sm:gap-0">
-            {[
-              { label: "Monthly", value: "monthly" },
-              { label: "Quarterly", value: "quarterly" },
-              { label: "Yearly", value: "yearly" },
-            ].map(({ label, value }) => (
-              <button
-                key={value}
-                onClick={() => setSelectedDuration(value)}
-                className={`px-4 py-1 rounded-md font-semibold text-sm border transition-colors ${
-                  selectedDuration === value
-                    ? "bg-[#1449BE] text-white border-[#1449BE]"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+      {/* Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Occupancy by Bed/Room</CardTitle>
+          <div className="flex gap-3">
+            <Button active={filter === "all"} onClick={() => setFilter("all")}>
+              All
+            </Button>
+            <Button
+              active={filter === "occupied"}
+              onClick={() => setFilter("occupied")}
+            >
+              Occupied
+            </Button>
+            <Button
+              active={filter === "vacant"}
+              onClick={() => setFilter("vacant")}
+            >
+              Vacant
+            </Button>
+            <Button
+              active={filter === "reserved"}
+              onClick={() => setFilter("reserved")}
+            >
+              Reserved
+            </Button>
           </div>
-        </div>
+        </CardHeader>
 
-        {/* Chart */}
-        <div
-          style={{ width: "100%", height: 250, transform: "translateX(-30px)" }}
-          className="flex justify-end"
-        >
-          <ResponsiveContainer>
-            <LineChart data={dataSets[selectedDuration]}>
-              <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" />
-              <XAxis
-                dataKey={selectedDuration === "monthly" ? "week" : "month"}
-                stroke="#6b7280"
-                style={{ fontSize: 12, fontWeight: 500 }}
-                padding={{ left: 10, right: 10 }}
-              />
-              <YAxis
-                stroke="#6b7280"
-                style={{ fontSize: 12, fontWeight: 500 }}
-                domain={[0, 80]}
-                tickCount={9}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#4057BD"
-                strokeWidth={3}
-                dot={{
-                  r: 6,
-                  stroke: "#4057BD",
-                  strokeWidth: 2,
-                  fill: "white",
-                }}
-                activeDot={{ r: 7 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Table with mobile slider */}
-        <div className="mt-8 rounded-lg">
-          <div className="overflow-x-auto sm:overflow-x-visible scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-            <table className="w-full text-sm text-left text-gray-700 min-w-[600px]">
-              <thead className="text-xs text-white uppercase bg-[#0041BA] border border-gray-200">
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse">
+              <thead>
                 <tr>
-                  <th className="py-3 px-4">Room</th>
-                  <th className="py-3 px-4">Bed</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Guest</th>
-                  <th className="py-3 px-4">In</th>
-                  <th className="py-3 px-4">Out</th>
-                  <th className="py-3 px-4">Rent</th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Room ID
+                  </th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Bed ID
+                  </th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Status
+                  </th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Guest Name
+                  </th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Check-in Date
+                  </th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Check-out Date
+                  </th>
+                  <th className="bg-blue-600 text-white text-left px-6 py-3">
+                    Rent
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {occupancyTableData.map(
-                  ({ roomId, bedId, status, guest, in: checkIn, out, rent }, i) => (
-                    <tr
-                      key={i}
-                      className="border-b border-gray-200 hover:bg-purple-50 transition-colors"
-                    >
-                      <td className="py-3 px-4 font-medium">{roomId}</td>
-                      <td className="py-3 px-4">{bedId}</td>
-                      <td
-                        className={`py-3 px-4 font-semibold ${
-                          status === "Occupied"
-                            ? "text-green-600"
-                            : "text-gray-400"
+                {filteredBeds.map((bed, idx) => (
+                  <tr key={idx} className="border-b">
+                    <td className="px-6 py-4">{bed.room}</td>
+                    <td className="px-6 py-4">{bed.bed}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-block text-xs px-3 py-1 rounded-full ${
+                          bed.status === "Occupied"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : bed.status === "Vacant"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-amber-100 text-amber-700"
                         }`}
                       >
-                        {status}
-                      </td>
-                      <td className="py-3 px-4">{guest}</td>
-                      <td className="py-3 px-4">{checkIn}</td>
-                      <td className="py-3 px-4">{out}</td>
-                      <td className="py-3 px-4">{rent}</td>
-                    </tr>
-                  )
-                )}
+                        {bed.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">{bed.guest}</td>
+                    <td className="px-6 py-4">{bed.checkin}</td>
+                    <td className="px-6 py-4">{bed.checkout}</td>
+                    <td className="px-6 py-4">{bed.rent}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
