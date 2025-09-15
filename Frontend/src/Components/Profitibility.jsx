@@ -165,7 +165,7 @@ export default function Profitibility() {
         </div>
 
         {/* Line chart */}
-        <section className="w-full h-72 p-4 rounded-xl border border-[#e5edff] hover:shadow-md transition-all">
+        <section className="w-full h-78 p-8 rounded-xl border border-[#e5edff] hover:shadow-md transition-all">
           <h2 className="text-sm font-semibold text-slate-600 mb-3">Monthly Revenue Trend</h2>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={lineData} margin={{ top: 10, right: 20, left: -24, bottom: 8 }}>
@@ -207,18 +207,19 @@ export default function Profitibility() {
             </span>
           </div>
 
-          <div className="overflow-hidden rounded-2xl ring-1 ring-[#e5edff] shadow-sm">
-            <div className="overflow-x-auto">
+          <div className="overflow-hidden rounded-2xl ring-1 ring-[#e5edff] shadow-sm mt-3">
+            <div className="overflow-x-auto ">
               <table className="min-w-full text-sm text-left">
-                <thead className="sticky top-0 bg-[#f5f9ff] text-slate-700/90 uppercase text-xs tracking-wider">
-                  <tr>
-                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Month</th>
-                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Revenue Collected</th>
-                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Revenue Expected</th>
-                    <th className="py-3.5 px-4 border-b border-[#e5edff]">Net Profit</th>
-                    <th className="py-3.5 px-4 border-b border-[#e5edff] text-right">Profit %</th>
-                  </tr>
-                </thead>
+              <thead className="sticky top-0 bg-[#2563EB] text-white uppercase text-xs tracking-wider">
+  <tr>
+    <th className="py-3.5 px-4 border-b border-[#e5edff]">Month</th>
+    <th className="py-3.5 px-4 border-b border-[#e5edff]">Revenue Collected</th>
+    <th className="py-3.5 px-4 border-b border-[#e5edff]">Revenue Expected</th>
+    <th className="py-3.5 px-4 border-b border-[#e5edff]">Net Profit</th>
+    <th className="py-3.5 px-4 border-b border-[#e5edff] text-right">Profit %</th>
+  </tr>
+</thead>
+
                 <tbody className="divide-y divide-[#eef3ff]">
                   {revenueData.map((row, idx) => (
                     <tr
@@ -245,8 +246,8 @@ export default function Profitibility() {
       </div>
 
       {/* Right (desktop) */}
-      <div className="hidden md:flex flex-col gap-6 w-96">
-        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl text-center shadow-sm">
+      <div className="hidden md:flex flex-col gap-6 w-96 ">
+        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl text-center hover:shadow-md transition-all">
           <h3 className="text-sm font-semibold text-slate-600 mb-1">Next month profit forecast</h3>
           <p className="text-3xl font-extrabold mb-1 tracking-tight text-slate-900">{nextMonthForecast}</p>
           <p className="text-xs text-slate-600">
@@ -255,7 +256,7 @@ export default function Profitibility() {
         </div>
 
         {/* Rooms pie */}
-        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl shadow-sm">
+        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <h3 className="text-sm font-semibold text-slate-600 mb-2">Analytics By Rooms Sharing</h3>
           <ResponsiveContainer width="100%" height={170}>
             <PieChart>
@@ -298,7 +299,7 @@ export default function Profitibility() {
         </div>
 
         {/* Expenses pie */}
-        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl shadow-sm">
+        <div className="bg-white/90 ring-1 ring-[#dbeafe] p-6 rounded-2xl  hover:shadow-md transition-all">
           <h3 className="text-sm font-semibold text-slate-600 mb-2">Expenses Breakdown</h3>
           <ResponsiveContainer width="100%" height={170}>
             <PieChart>
