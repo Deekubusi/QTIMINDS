@@ -1,12 +1,46 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import "./Dashboard.css"; // optional: keep for global fonts if needed
 import Calendar1 from "./pages/Calender";
 import MaintenanceAlertsDashboard from "./pages/Mantainence";
 import Upcoming from "./pages/Upcoming";
 import RecentActivityFeed from "./pages/Recent_Activity";
+import AddManagerModal from "./pages/AddManagerModal";
+import AddNewPGModal from "./pages/AddNewPG.jsx";
+import DownloadReportModal from "./pages/DownloadReport.jsx";
+import SendAnnouncementModal from "./pages/SendAnnouncement.jsx";
+import AddGuestModal from "./pages/AddGuest";
+
+
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
+  // ← paste the state + body-scroll effect block right here
+  const [isAddManagerOpen, setIsAddManagerOpen] = useState(false);
+
+  // prevent background scroll when modal open
+  useEffect(() => {
+    document.body.style.overflow = isAddManagerOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isAddManagerOpen]);
+
+  // Download Report
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
+
+    // Send Announcement modal state + success dialog flag
+  const [isSendOpen, setIsSendOpen] = useState(false);
+  const [announcementSuccess, setAnnouncementSuccess] = useState(false);
+
+  // Add New PG
+  const [isAddNewPGOpen, setIsAddNewPGOpen] = useState(false);
+
+  //AddGuest
+  const [isAddGuestOpen, setIsAddGuestOpen] = useState(false);
+
+
 
   return (
     <main className="min-h-screen bg-[#E7EFF7] px-4 py-8">
@@ -37,513 +71,1045 @@ export default function Dashboard() {
         {/* Cards Grid */}
         <section className="mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* Occupancy */}
-            <article
-              className="bg-white rounded-2xl p-8 flex flex-col border shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] h-[450px]"
-              style={{
-                borderColor: "#E5EEFF",
-                color: "#001433",
-                fontFamily:
-                  "Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
-                fontFeatureSettings: "'liga' off, 'clig' off",
-                fontSize: "17px",
-                fontStyle: "normal",
-                fontWeight: 600,
-                lineHeight: "normal",
-                letterSpacing: "-0.154px",
-              }}
+{/* Occupancy */}
+<article
+  className="rounded-[20px] flex-shrink-0"
+  style={{
+    width: "261px",
+    height: "487px",
+    border: "1px solid rgba(79, 107, 227, 0.00)",
+    background: "#FFF",
+    boxShadow: "4px 4px 4px rgba(0, 0, 0, 0.10)",
+  }}
+>
+  <div
+    className="h-full rounded-[20px] p-6 flex flex-col shadow-sm transition-transform duration-200"
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      color: "#001433",
+      fontFamily:
+        "Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+      fontFeatureSettings: "'liga' off, 'clig' off",
+    }}
+  >
+    {/* Header */}
+    <header className="flex flex-col items-center gap-3">
+      <div
+        className="flex-shrink-0"
+        style={{ width: "48px", height: "48px", aspectRatio: "1/1" }}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" className="w-full h-full" fill="none">
+          <path d="M38 14H22V28H6V10H2V40H6V34H42V40H46V22C46 19.8783 45.1571 17.8434 43.6569 16.3431C42.1566 14.8429 40.1217 14 38 14ZM14 26C15.5913 26 17.1174 25.3679 18.2426 24.2426C19.3679 23.1174 20 21.5913 20 20C20 18.4087 19.3679 16.8826 18.2426 15.7574C17.1174 14.6321 15.5913 14 14 14C12.4087 14 10.8826 14.6321 9.75736 15.7574C8.63214 16.8826 8 18.4087 8 20C8 21.5913 8.63214 23.1174 9.75736 24.2426C10.8826 25.3679 12.4087 26 14 26Z" fill="#0B2595" />
+        </svg>
+      </div>
+
+      <h3
+        className="font-semibold text-center"
+        style={{
+          color: "#001433",
+          fontSize: "23px",
+          fontWeight: 600,
+          letterSpacing: "-0.154px",
+          fontFamily: "Poppins, sans-serif",
+        }}
+      >
+        Occupancy Rate
+      </h3>
+    </header>
+
+    {/* Donut + stats column */}
+    <div className="flex-1 flex flex-col items-center justify-center">
+      {/* Donut with hover pop (slight) */}
+      <div
+        className="relative transition-transform duration-300"
+        style={{ width: "164px", height: "159px", flexShrink: 0 }}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="164" height="159" viewBox="0 0 164 159" className="w-full h-full donut" fill="none">
+          <path d="M164 79.5C164 123.407 127.287 159 82 159C36.7127 159 0 123.407 0 79.5C0 35.5934 36.7127 0 82 0C127.287 0 164 35.5934 164 79.5ZM22.2219 79.5C22.2219 111.508 48.9855 137.456 82 137.456C115.015 137.456 141.778 111.508 141.778 79.5C141.778 47.492 115.015 21.5444 82 21.5444C48.9855 21.5444 22.2219 47.492 22.2219 79.5Z" fill="#FFC107"/>
+          <path d="M82 10.742C82 4.80935 86.8287 -0.0705119 92.7135 0.681347C106.909 2.49503 120.435 7.89141 131.896 16.4119C146.213 27.0553 156.51 41.9793 161.191 58.8716C165.873 75.7639 164.677 93.6815 157.79 109.848C150.903 126.015 138.709 139.528 123.097 148.295C107.485 157.061 89.3264 160.591 71.4353 158.337C53.5442 156.084 36.9191 148.173 24.1358 135.83C11.3526 123.487 3.12477 107.401 0.727264 90.0647C-1.18184 76.26 0.69075 62.2761 6.06602 49.4913C8.37482 44 15.0223 42.2449 20.2281 45.1405C25.6345 48.1477 27.381 55.0094 25.3363 60.8482C22.3862 69.2728 21.4571 78.2925 22.6903 87.2097C24.4399 99.861 30.4443 111.6 39.773 120.607C49.1017 129.615 61.2341 135.388 74.2903 137.032C87.3465 138.677 100.598 136.101 111.991 129.704C123.384 123.306 132.283 113.445 137.309 101.647C142.335 89.8491 143.207 76.7735 139.791 64.4462C136.375 52.1188 128.86 41.2279 118.412 33.4608C110.824 27.8197 101.996 24.0551 92.6881 22.4168C86.8452 21.3885 82 16.6746 82 10.742Z" fill="#4057BD"/>
+        </svg>
+
+        {/* center % */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            style={{
+              fontFamily: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+              fontSize: "22px",
+              fontWeight: 600,
+              color: "#000",
+            }}
+          >
+            82%
+          </div>
+        </div>
+      </div>
+
+      {/* Stats + percent row - placed lower so it lines up with other cards */}
+      <div className="mt-6 text-center p-2" style={{ width: "100%" }}>
+        <div
+          className="font-semibold"
+          style={{ fontFamily: "Poppins, sans-serif", fontSize: "17px", color: "#000" }}
+        >
+          44/53 beds occupied
+        </div>
+
+        <div className="mt-3 flex items-center justify-center gap-2">
+          <div style={{ width: "24px", height: "24px" }} className="flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="w-full h-full" fill="none">
+              <path d="M7 10H11V18.92L13.01 18.95V10H17L12 5L7 10Z" fill="#10BA2A" />
+            </svg>
+          </div>
+
+          <div
+            style={{
+              color: "#000",
+              fontFamily: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+              fontSize: "15px",
+              fontWeight: 400,
+              letterSpacing: "-0.154px",
+            }}
+          >
+            <span className="text-[#10BA2A] font-semibold mr-1">10%</span> vs last month
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Footer link */}
+    <div className="mt-4 text-right">
+      <a
+        href="#"
+        className="text-[#0F45A9] font-medium inline-block hover:underline"
+        style={{
+          fontFamily: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+          fontSize: "15px",
+          fontWeight: 500,
+          lineHeight: "12.612px",
+          textDecoration: "none",
+        }}
+      >
+        View Details →
+      </a>
+    </div>
+  </div>
+
+  {/* local hover behaviour: whole card pop, donut slight pop and link underline on hover */}
+  <style>{`
+    /* card hover pop - moves whole inner wrapper (keeps text sticky inside card) */
+    article:hover > div {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 6px 8px 12px rgba(0,0,0,0.12);
+    }
+
+    /* donut slight pop when hovered directly */
+    article .donut {
+      transition: transform 220ms ease;
+      transform-origin: center center;
+    }
+    article .donut:hover {
+      transform: scale(1.03);
+    }
+
+    /* ensure the "View Details" gets underlined on hover */
+    article a:hover { text-decoration: underline; }
+  `}</style>
+</article>
+
+
+{/* Active Guests */}
+<article
+  className="rounded-[20px] flex-shrink-0"
+  style={{
+    width: "261px",
+    height: "487px",
+    border: "1px solid rgba(79, 107, 227, 0.00)",
+    background: "#FFF",
+    boxShadow: "4px 4px 4px 4px rgba(0, 0, 0, 0.10)",
+  }}
+>
+  <div
+    className="h-full rounded-[20px] p-4 flex flex-col shadow-sm transition-transform duration-200"
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      color: "#001433",
+    }}
+  >
+    {/* Header */}
+    <header className="flex flex-col items-center justify-center gap-3 mb-4">
+      <div
+        className="flex-shrink-0"
+        style={{ width: "42px", height: "42px", aspectRatio: "1/1" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="42"
+          height="42"
+          viewBox="0 0 42 42"
+          fill="none"
+          className="w-full h-full"
+        >
+          <path
+            d="M13.125 11.375C13.125 15.7168 16.6582 19.25 21 19.25C25.3417 19.25 28.875 15.7168 28.875 11.375C28.875 7.03325 25.3417 3.5 21 3.5C16.6582 3.5 13.125 7.03325 13.125 11.375ZM35 36.75H36.75V35C36.75 28.2467 31.2533 22.75 24.5 22.75H17.5C10.745 22.75 5.25 28.2467 5.25 35V36.75H35Z"
+            fill="#0B2595"
+          />
+        </svg>
+      </div>
+
+      <h3
+        className="font-semibold text-center"
+        style={{
+          color: "#001433",
+          fontFamily:
+            "Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+          fontFeatureSettings: "'liga' off, 'clig' off",
+          fontSize: "23px",
+          fontStyle: "normal",
+          fontWeight: 600,
+          lineHeight: "normal",
+          letterSpacing: "-0.154px",
+        }}
+      >
+        Active Guests
+      </h3>
+    </header>
+
+    {/* Body (chart + legend + trend) */}
+    <div className="flex-1 flex flex-col items-center">
+      <div className="w-full max-w-[340px]">
+        <svg
+          viewBox="0 0 270 210"
+          className="w-full h-auto"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {/* left axis labels */}
+          <g
+            fontFamily="Nunito"
+            fontSize="13"
+            fill="#000"
+            textAnchor="end"
+            fontWeight="500"
+          >
+            <text x="35" y="35">
+              80
+            </text>
+            <text x="35" y="60">
+              60
+            </text>
+            <text x="35" y="90">
+              40
+            </text>
+            <text x="35" y="120">
+              20
+            </text>
+            <text x="35" y="150">
+              0
+            </text>
+          </g>
+
+          {/* horizontal baseline width 210px */}
+          <rect
+            x="50"
+            y="158"
+            width="210"
+            height="3"
+            fill="#030229"
+            opacity="0.08"
+            rx="1"
+          />
+
+          {/* Group 1: Single */}
+          <g className="bar-group" data-label="Single">
+            <rect
+              x="70"
+              y={158 - (25 / 80) * 110}
+              width="16"
+              height={(25 / 80) * 110}
+              fill="#4057BD"
+              rx="2"
+            />
+            <rect
+              x="95"
+              y={158 - (20 / 80) * 110}
+              width="16"
+              height={(20 / 80) * 110}
+              fill="#FFC107"
+              rx="2"
+            />
+            <text
+              x="78"
+              y={158 - (25 / 80) * 110 - 6}
+              fontFamily="Nunito"
+              fontSize="12"
+              fontWeight={500}
+              fill="#000"
+              textAnchor="middle"
             >
-              {/* Header */}
-              <header className="flex flex-col items-center gap-2 mb-3">
-                <div className="w-7 h-7">
-                  <svg viewBox="0 0 29 29" className="w-full h-full">
-                    <path
-                      d="M26.5834 15.3057C26.4774 15.3063 26.3723 15.286 26.2742 15.2459C26.176 15.2058 26.0868 15.1467 26.0115 15.0721L14.5001 3.55262L2.98871 15.0721C2.83461 15.204 2.63638 15.273 2.43364 15.2652C2.2309 15.2573 2.03859 15.1733 1.89512 15.0298C1.75166 14.8864 1.66761 14.694 1.65978 14.4913C1.65195 14.2886 1.72091 14.0903 1.85288 13.9362L13.9362 1.8529C14.0871 1.70287 14.2913 1.61865 14.5041 1.61865C14.7169 1.61865 14.9211 1.70287 15.072 1.8529L27.1554 13.9362C27.2662 14.0493 27.3413 14.1926 27.3712 14.3481C27.4011 14.5036 27.3845 14.6645 27.3234 14.8106C27.2624 14.9567 27.1597 15.0816 27.0281 15.1697C26.8964 15.2577 26.7418 15.305 26.5834 15.3057Z"
-                      fill="#4057BD"
-                    />
-                    <path
-                      d="M14.5002 6.27539L4.8335 15.9743V25.7779C4.8335 26.2052 5.00324 26.615 5.30538 26.9171C5.60752 27.2193 6.01731 27.389 6.44461 27.389H12.0835V19.3334H16.9168V27.389H22.5557C22.983 27.389 23.3928 27.2193 23.6949 26.9171C23.9971 26.615 24.1668 26.2052 24.1668 25.7779V15.9179L14.5002 6.27539Z"
-                      fill="#4057BD"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  className="font-semibold text-center"
-                  style={{ fontSize: "clamp(1rem, 1.9vw, 1.25rem)" }}
-                >
-                  Occupancy Rate
-                </h3>
-              </header>
+              25
+            </text>
+            <text
+              x="103"
+              y={158 - (20 / 80) * 110 - 6}
+              fontFamily="Nunito"
+              fontSize="12"
+              fontWeight={500}
+              fill="#000"
+              textAnchor="middle"
+            >
+              20
+            </text>
+          </g>
 
-              {/* Donut Chart */}
-              <div className="flex-1 flex flex-col items-center pt-6">
-                <div className="relative w-[150px] sm:w-[160px] md:w-[170px] transition-transform duration-300 hover:scale-105">
-                  <svg viewBox="0 0 230 205" className="w-full h-auto">
-                    {/* Track */}
-                    <path
-                      d="M230 102.5C230 159.109 178.513 205 115 205C51.4873 205 0 159.109 0 102.5C0 45.8908 51.4873 0 115 0C178.513 0 230 45.8908 230 102.5ZM31.1649 102.5C31.1649 143.768 68.6991 177.223 115 177.223C161.301 177.223 198.835 143.768 198.835 102.5C198.835 61.2319 161.301 27.7774 115 27.7774C68.6991 27.7774 31.1649 61.2319 31.1649 102.5Z"
-                      fill="#FFC107"
-                    />
-                    {/* Progress */}
-                    <path
-                      d="M115 13.6319C115 6.10322 121.12 -0.0752011 128.607 0.719895C149.032 2.88911 168.521 9.91392 184.976 21.16C205.055 34.8826 219.496 54.1242 226.061 75.9036C232.626 97.683 230.95 120.784 221.291 141.628C211.632 162.472 194.531 179.895 172.636 191.198C150.741 202.5 125.275 207.051 100.184 204.146C75.0925 201.24 51.7768 191.04 33.849 175.126C15.9213 159.212 4.38231 138.473 1.01995 116.121C-1.68847 98.1165 1.03027 79.8755 8.77112 63.2374C11.9853 56.3289 20.4185 54.1346 27.2026 57.6037V57.6037C35.0102 61.5962 37.4979 71.454 34.553 79.714C30.8021 90.2346 29.672 101.427 31.3374 112.498C33.8054 128.905 42.2751 144.128 55.4343 155.809C68.5935 167.49 85.7074 174.976 104.125 177.109C122.542 179.242 141.234 175.901 157.305 167.605C173.376 159.309 185.929 146.52 193.019 131.221C200.108 115.921 201.339 98.9643 196.52 82.978C191.701 66.9916 181.102 52.8681 166.364 42.7956C155.255 35.2036 142.263 30.2325 128.585 28.2445C121.135 27.1616 115 21.1606 115 13.6319V13.6319Z"
-                      fill="#4057BD"
-                    />
-                  </svg>
+          {/* Group 2: Double */}
+          <g className="bar-group" data-label="Double">
+            <rect
+              x="135"
+              y={158 - (50 / 80) * 110}
+              width="16"
+              height={(50 / 80) * 110}
+              fill="#4057BD"
+              rx="2"
+            />
+            <rect
+              x="160"
+              y={158 - (35 / 80) * 110}
+              width="16"
+              height={(35 / 80) * 110}
+              fill="#FFC107"
+              rx="2"
+            />
+            <text
+              x="143"
+              y={158 - (50 / 80) * 110 - 6}
+              fontFamily="Nunito"
+              fontSize="12"
+              fontWeight={500}
+              fill="#000"
+              textAnchor="middle"
+            >
+              50
+            </text>
+            <text
+              x="168"
+              y={158 - (35 / 80) * 110 - 6}
+              fontFamily="Nunito"
+              fontSize="12"
+              fontWeight={500}
+              fill="#000"
+              textAnchor="middle"
+            >
+              35
+            </text>
+          </g>
 
-                  {/* Center % */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div
-                      className="text-center"
-                      style={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
-                    >
-                      82%
-                    </div>
-                  </div>
-                </div>
+          {/* Group 3: Total */}
+          <g className="bar-group" data-label="Total">
+            <rect
+              x="200"
+              y={158 - (75 / 80) * 110}
+              width="16"
+              height={(75 / 80) * 110}
+              fill="#4057BD"
+              rx="2"
+            />
+            <rect
+              x="225"
+              y={158 - (55 / 80) * 110}
+              width="16"
+              height={(55 / 80) * 110}
+              fill="#FFC107"
+              rx="2"
+            />
+            <text
+              x="208"
+              y={158 - (75 / 80) * 110 - 6}
+              fontFamily="Nunito"
+              fontSize="12"
+              fontWeight={500}
+              fill="#000"
+              textAnchor="middle"
+            >
+              75
+            </text>
+            <text
+              x="233"
+              y={158 - (55 / 80) * 110 - 6}
+              fontFamily="Nunito"
+              fontSize="12"
+              fontWeight={500}
+              fill="#000"
+              textAnchor="middle"
+            >
+              55
+            </text>
+          </g>
 
-                {/* Stats */}
-                <div className="mt-4 text-center p-2">
-                  <div className="font-semibold">44/53 beds occupied</div>
-                  <div className="mt-2 flex items-center justify-center gap-2 text-sm">
-                    <svg viewBox="0 0 24 24" className="w-4 h-4">
-                      <path
-                        d="M7 10H11V18.92L13.01 18.95V10H17L12 5L7 10Z"
-                        fill="#10BA2A"
-                      />
-                    </svg>
-                    <span>10% vs last month</span>
-                  </div>
-                </div>
-              </div>
+          {/* x-axis labels */}
+          <g
+            fontFamily="Nunito"
+            fontSize="13"
+            fill="#000"
+            textAnchor="middle"
+            fontWeight="500"
+          >
+            <text x="90" y="185">
+              Single
+            </text>
+            <text x="160" y="185">
+              Double
+            </text>
+            <text x="230" y="185">
+              Total
+            </text>
+          </g>
+        </svg>
+      </div>
 
-              {/* Footer link */}
-              <div className="mt-4 text-right">
-                <button
-                  className="font-medium transition-colors duration-300 hover:underline hover:text-[#2A3EBE]"
-                  style={{
-                    color: "#4057BD",
-                    fontSize: "clamp(0.78rem, 1.4vw, 0.95rem)",
-                  }}
-                >
-                  View Details →
-                </button>
-              </div>
-            </article>
-
-            {/* Active Guests */}
-            <article className="bg-white border border-[#4F6BE3] rounded-lg p-4 flex flex-col shadow-sm">
-              <header className="flex items-center justify-center gap-2 mb-3">
-                <div className="w-8 h-8" aria-hidden>
-                  <svg viewBox="0 0 31 31" className="w-full h-full">
-                    <path
-                      d="M9.6875 8.396C9.6875 11.6006 12.2954 14.2085 15.5 14.2085C18.7046 14.2085 21.3125 11.6006 21.3125 8.396C21.3125 5.19137 18.7046 2.5835 15.5 2.5835C12.2954 2.5835 9.6875 5.19137 9.6875 8.396ZM25.8333 27.1252H27.125V25.8335C27.125 20.849 23.0679 16.7918 18.0833 16.7918H12.9167C7.93083 16.7918 3.875 20.849 3.875 25.8335V27.1252H25.8333Z"
-                      fill="black"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  className="font-semibold"
-                  style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.25rem)" }}
-                >
-                  Active Guests
-                </h3>
-              </header>
-
-              <div className="flex-1 flex flex-col items-center">
-                {/* svg chart container centered and responsive */}
-                <div className="w-full max-w-[340px]">
-                  <svg
-                    viewBox="0 0 270 210"
-                    className="w-full h-auto"
-                    preserveAspectRatio="xMidYMid meet"
-                  >
-                    <g
-                      fontFamily="Nunito"
-                      fontSize="11"
-                      fill="#000"
-                      textAnchor="end"
-                    >
-                      <text x="35" y="35">
-                        80
-                      </text>
-                      <text x="35" y="60">
-                        60
-                      </text>
-                      <text x="35" y="90">
-                        40
-                      </text>
-                      <text x="35" y="120">
-                        20
-                      </text>
-                      <text x="35" y="150">
-                        0
-                      </text>
-                    </g>
-
-                    <rect
-                      x="50"
-                      y="158"
-                      width="190"
-                      height="4"
-                      fill="rgba(3,2,41,0.08)"
-                    />
-
-                    {/* bars */}
-                    <rect
-                      x="70"
-                      y={158 - (25 / 80) * 110}
-                      width="16"
-                      height={(25 / 80) * 110}
-                      fill="#4F6BE3"
-                      rx="2"
-                    />
-                    <rect
-                      x="95"
-                      y={158 - (20 / 80) * 110}
-                      width="16"
-                      height={(20 / 80) * 110}
-                      fill="#FFD66B"
-                      rx="2"
-                    />
-
-                    <rect
-                      x="135"
-                      y={158 - (50 / 80) * 110}
-                      width="16"
-                      height={(50 / 80) * 110}
-                      fill="#4F6BE3"
-                      rx="2"
-                    />
-                    <rect
-                      x="160"
-                      y={158 - (35 / 80) * 110}
-                      width="16"
-                      height={(35 / 80) * 110}
-                      fill="#FFD66B"
-                      rx="2"
-                    />
-
-                    <rect
-                      x="200"
-                      y={158 - (75 / 80) * 110}
-                      width="16"
-                      height={(75 / 80) * 110}
-                      fill="#4F6BE3"
-                      rx="2"
-                    />
-                    <rect
-                      x="225"
-                      y={158 - (55 / 80) * 110}
-                      width="16"
-                      height={(55 / 80) * 110}
-                      fill="#FFD66B"
-                      rx="2"
-                    />
-
-                    {/* values above bars */}
-                    <g
-                      fontFamily="Nunito"
-                      fontSize="11"
-                      fill="#000"
-                      textAnchor="middle"
-                    >
-                      <text x="78" y={158 - (25 / 80) * 110 - 6}>
-                        25
-                      </text>
-                      <text x="103" y={158 - (20 / 80) * 110 - 6}>
-                        20
-                      </text>
-                      <text x="143" y={158 - (50 / 80) * 110 - 6}>
-                        50
-                      </text>
-                      <text x="168" y={158 - (35 / 80) * 110 - 6}>
-                        35
-                      </text>
-                      <text x="208" y={158 - (75 / 80) * 110 - 6}>
-                        75
-                      </text>
-                      <text x="233" y={158 - (55 / 80) * 110 - 6}>
-                        55
-                      </text>
-                    </g>
-
-                    {/* x-axis labels */}
-                    <g
-                      fontFamily="Nunito"
-                      fontSize="11"
-                      fill="#000"
-                      textAnchor="middle"
-                    >
-                      <text x="90" y="185">
-                        Single
-                      </text>
-                      <text x="160" y="185">
-                        Double
-                      </text>
-                      <text x="230" y="185">
-                        Total
-                      </text>
-                    </g>
-                  </svg>
-                </div>
-
-                {/* legend */}
-                <div className="flex gap-6 mt-3 items-center justify-center">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3.5 h-3.5 block bg-[#4F6BE3]" />
-                    <span style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}>
-                      Capacity
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3.5 h-3.5 block bg-[#FFD66B]" />
-                    <span style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}>
-                      Active Guests
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  className="mt-3 flex items-center gap-2"
-                  style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}
-                >
-                  <svg viewBox="0 0 10 14" className="w-3 h-3">
-                    <path
-                      d="M0 5H4V13.92L6.01 13.95V5H10L5 0L0 5Z"
-                      fill="#10BA2A"
-                    />
-                  </svg>
-                  <div>7% vs last month</div>
-                </div>
-              </div>
-
-              <div className="mt-3 text-right">
-                <button
-                  className="text-[#0F45A9] font-medium"
-                  style={{ fontSize: "clamp(0.78rem, 1.4vw, 0.95rem)" }}
-                >
-                  View Details →
-                </button>
-              </div>
-            </article>
-
-            {/* Revenue */}
-            <article className="bg-white border border-[#4F6BE3] rounded-lg p-4 flex flex-col shadow-sm">
-              <header className="flex items-center justify-center gap-3 mb-2">
-                <div className="w-7 h-7" aria-hidden>
-                  <svg viewBox="0 0 28 28" className="w-full h-full">
-                    <path
-                      d="M23.625 14.2837C24.5811 13.5274 25.3231 12.5345 25.7775 11.4032C26.0913 12.3109 26.2488 13.3329 26.25 14.4692C26.25 17.1852 25.291 19.0892 24.3075 20.3142C23.8573 20.8776 23.3335 21.3779 22.75 21.8017V23.6252C22.75 24.3214 22.4734 24.9891 21.9812 25.4814C21.4889 25.9737 20.8212 26.2502 20.125 26.2502H19.25C18.7859 26.2502 18.3408 26.0659 18.0126 25.7377C17.6844 25.4095 17.5 24.9644 17.5 24.5002H14C14 24.9644 13.8156 25.4095 13.4874 25.7377C13.1592 26.0659 12.7141 26.2502 12.25 26.2502H11.375C10.6788 26.2502 10.0111 25.9737 9.51884 25.4814C9.02656 24.9891 8.75 24.3214 8.75 23.6252V23.2525C7.63265 22.8958 6.61803 22.2744 5.7925 21.4412C4.75825 20.3895 4.17725 19.0752 3.885 18.251C3.85094 18.1375 3.79055 18.0336 3.70874 17.9478C3.62694 17.8621 3.52604 17.7969 3.41425 17.7575C2.93598 17.6212 2.515 17.3331 2.2148 16.9366C1.9146 16.5401 1.75146 16.0568 1.75 15.5595V14.17C1.75 13.162 2.4185 12.2765 3.38625 12C3.56825 11.9475 3.76425 11.7707 3.8605 11.4785C4.09675 10.7662 4.55 9.71274 5.383 8.86924C6.09941 8.15141 6.91935 7.54501 7.8155 7.07024V3.78549C7.81653 3.51951 7.89728 3.25994 8.04733 3.04033C8.19739 2.82071 8.40984 2.65113 8.65725 2.55349C8.89775 2.45268 9.16234 2.42382 9.41892 2.47042C9.6755 2.51701 9.91305 2.63705 10.1027 2.81599C10.5455 3.23424 11.1265 3.73299 11.7477 4.14074C12.3865 4.55899 12.985 4.82324 13.4732 4.87224H13.482C12.5437 6.26138 12.1351 7.94109 12.3305 9.60599C12.5422 11.4067 13.9352 12.4882 15.1042 12.973L19.2868 14.7037C20.454 15.1885 22.204 15.4072 23.6268 14.2837M8.3125 13.1252C8.6606 13.1252 8.99444 12.987 9.24058 12.7408C9.48672 12.4947 9.625 12.1608 9.625 11.8127C9.625 11.4646 9.48672 11.1308 9.24058 10.8847C8.99444 10.6385 8.6606 10.5002 8.3125 10.5002C7.9644 10.5002 7.63056 10.6385 7.38442 10.8847C7.13828 11.1308 7 11.4646 7 11.8127C7 12.1608 7.13828 12.4947 7.38442 12.7408C7.63056 12.987 7.9644 13.1252 8.3125 13.1252ZM14.4025 6.86024C14.6992 6.11137 15.1642 5.4408 15.7615 4.90044C16.3588 4.36007 17.0725 3.9644 17.8473 3.74405C18.622 3.5237 19.4371 3.48457 20.2294 3.6297C21.0217 3.77483 21.77 4.10033 22.4163 4.58099C23.0627 5.06165 23.5898 5.6846 23.9568 6.40161C24.3238 7.11862 24.5209 7.91047 24.5329 8.71586C24.5448 9.52126 24.3713 10.3186 24.0257 11.0462C23.6802 11.7738 23.1718 12.4121 22.54 12.9117C21.812 13.4857 20.8127 13.442 19.9552 13.0867L15.7727 11.3542C14.9152 11.0007 14.1767 10.3235 14.0682 9.40299C14.0168 8.95724 14.0227 8.50674 14.0857 8.06249L14.4025 6.86024Z"
-                      fill="black"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  className="font-semibold"
-                  style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.25rem)" }}
-                >
-                  Revenue
-                </h3>
-              </header>
-
-              <div
-                className="text-center mt-1"
-                style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}
-              >
-                INR in K
-              </div>
-
-              <div className="flex-1 flex items-center justify-center mt-3">
-                {/* revenue bars centered */}
-                <div className="w-full max-w-[360px]">
-                  <div className="flex items-start">
-                    <div className="w-1/3">
-                      <div className="flex flex-col justify-between h-[110px]">
-                        <div className="text-[0.95rem] font-medium">Profit</div>
-                        <div className="text-[0.95rem] font-medium">
-                          Expense
-                        </div>
-                        <div className="text-[0.95rem] font-medium">
-                          Revenue
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="w-2/3 pl-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="flex-1">
-                          <div className="h-3 rounded-md w-[40%] bg-[#FF8F6B]" />
-                        </div>
-                        <div className="w-12 text-right text-[0.95rem] font-medium">
-                          200
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="flex-1">
-                          <div className="h-3 rounded-md w-[60%] bg-[#FFD66B]" />
-                        </div>
-                        <div className="w-12 text-right text-[0.95rem] font-medium">
-                          300
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1">
-                          <div className="h-3 rounded-md w-[95%] bg-[#4F6BE3]" />
-                        </div>
-                        <div className="w-12 text-right text-[0.95rem] font-medium">
-                          500
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="mt-4 flex items-center justify-center gap-2"
-                style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}
-              >
-                <svg viewBox="0 0 11 15" className="w-3 h-3">
-                  <path
-                    d="M10.1371 8.94884L6.13761 9.01061L5.99985 0.0916788L3.98963 0.0927244L4.12785 9.04166L0.138328 9.10328L5.21495 14.0255L10.1371 8.94884Z"
-                    fill="#D11A2A"
-                  />
-                </svg>
-                <div>
-                  <span className="font-semibold text-[#D11A2A] mr-1">8%</span>{" "}
-                  vs last month
-                </div>
-              </div>
-
-              <div className="mt-4 text-right">
-                <button
-                  className="text-[#0F45A9] font-medium"
-                  style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}
-                >
-                  View Details →
-                </button>
-              </div>
-            </article>
-
-            {/* Overdue */}
-            <article className="bg-white border border-[#4F6BE3] rounded-lg p-4 flex flex-col shadow-sm">
-              <header className="flex items-center justify-center gap-3 mb-2">
-                <div className="w-7 h-7" aria-hidden>
-                  <svg viewBox="0 0 30 30" className="w-full h-full">
-                    <path
-                      d="M16.0825 3.74994L27.99 24.3749C28.0997 24.565 28.1575 24.7805 28.1575 24.9999C28.1575 25.2194 28.0997 25.4349 27.99 25.6249C27.8803 25.815 27.7225 25.9728 27.5325 26.0825C27.3425 26.1922 27.1269 26.2499 26.9075 26.2499H3.0925C2.87308 26.2499 2.65753 26.1922 2.46751 26.0825C2.27749 25.9728 2.1197 25.815 2.00999 25.6249C1.90028 25.4349 1.84253 25.2194 1.84253 24.9999C1.84253 24.7805 1.90029 24.565 2.01 24.3749L13.9175 3.74994C14.0272 3.55994 14.185 3.40215 14.375 3.29245C14.565 3.18275 14.7806 3.125 15 3.125C15.2194 3.125 15.435 3.18275 15.625 3.29245C15.815 3.40215 15.9728 3.55994 16.0825 3.74994ZM13.75 19.9999V22.4999H16.25V19.9999H13.75ZM13.75 11.2499V17.4999H16.25V11.2499H13.75Z"
-                      fill="black"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  className="font-semibold"
-                  style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.25rem)" }}
-                >
-                  Overdue
-                </h3>
-              </header>
-
-              <div className="flex-1 flex flex-col items-center">
-                <div className="relative w-[180px] sm:w-[200px] md:w-[220px]">
-                  <div className="w-full">
-                    <svg viewBox="0 0 211 204" className="w-full h-auto">
-                      <path
-                        d="M211 102C211 158.333 163.766 204 105.5 204C47.234 204 0 158.333 0 102C0 45.667 47.234 0 105.5 0C163.766 0 211 45.667 211 102ZM30.7413 102C30.7413 141.918 64.2119 174.279 105.5 174.279C146.788 174.279 180.259 141.918 180.259 102C180.259 62.0816 146.788 29.7214 105.5 29.7214C64.2119 29.7214 30.7413 62.0816 30.7413 102Z"
-                        fill="#FFD66B"
-                      />
-                      <path
-                        d="M67.9963 182.053C64.6444 189.208 56.131 192.472 49.3781 188.371C31.7011 177.634 17.6174 162.003 9.06476 143.365C0.622604 124.968 -1.95662 104.674 1.46884 85.037C2.86656 77.0246 11.2585 72.7769 19.027 75.1858C27.0141 77.6625 31.2395 86.2377 30.358 94.5534C29.0255 107.124 31.0815 119.907 36.4547 131.616C41.9185 143.523 50.5354 153.716 61.3194 161.235C68.0372 165.919 71.4705 174.637 67.9963 182.053Z"
-                        fill="#FF8F6B"
-                      />
-                      <path
-                        d="M105.5 15.217C105.5 6.81289 112.345 -0.109322 120.668 1.05967C132.087 2.66359 143.191 6.07278 153.526 11.1814C168.394 18.5306 181.245 29.187 191.022 42.2741C200.8 55.3613 207.225 70.5055 209.769 86.4613C212.312 102.417 210.903 118.729 205.655 134.055C200.407 149.382 191.471 163.285 179.583 174.621C167.694 185.958 153.192 194.404 137.269 199.266C121.345 204.127 104.456 205.265 87.9893 202.585C76.8182 200.767 66.0582 197.228 56.109 192.132C48.3672 188.166 46.9411 178.142 52.2439 171.246C57.3099 164.659 66.6487 163.45 74.2247 166.864C80.2395 169.575 86.6249 171.501 93.214 172.573C104.767 174.453 116.617 173.655 127.79 170.244C138.962 166.833 149.137 160.907 157.478 152.953C165.82 144.999 172.089 135.244 175.771 124.491C179.453 113.738 180.443 102.293 178.658 91.0977C176.873 79.9026 172.365 69.277 165.505 60.0947C158.645 50.9124 149.628 43.4356 139.196 38.2792C133.303 35.3659 127.052 33.2404 120.617 31.9423C112.379 30.2807 105.5 23.6211 105.5 15.217Z"
-                        fill="#5B93FF"
-                      />
-                    </svg>
-                  </div>
-
-                  {/* center amount */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div
-                      className="text-center font-bold"
-                      style={{ fontSize: "clamp(0.95rem, 1.9vw, 1.2rem)" }}
-                    >
-                      ₹1,15,000
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-col items-start gap-2 w-full px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3.5 h-3.5 rounded-sm bg-[#5B93FF]" />
-                    <div style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}>
-                      &lt; 15 Days - 55%
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-3.5 h-3.5 rounded-sm bg-[#FF8F6B]" />
-                    <div style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}>
-                      15-30 Days - 25%
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-3.5 h-3.5 rounded-sm bg-[#FFD66B]" />
-                    <div style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}>
-                      &gt; 30 Days - 20%
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="mt-4 text-center"
-                style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}
-              >
-                <svg viewBox="0 0 11 15" className="inline-block w-3 h-3 mr-2">
-                  <path
-                    d="M10.1371 8.94884L6.13761 9.01061L5.99985 0.0916788L3.98963 0.0927244L4.12785 9.04166L0.138328 9.10328L5.21495 14.0255L10.1371 8.94884Z"
-                    fill="#D11A2A"
-                  />
-                </svg>
-                <span className="font-semibold text-[#D11A2A] mr-2">5%</span>
-                <span>vs last month</span>
-              </div>
-
-              <div className="mt-4 text-right">
-                <button
-                  className="text-[#0F45A9] font-medium"
-                  style={{ fontSize: "clamp(0.78rem,1.4vw,0.95rem)" }}
-                >
-                  View Details →
-                </button>
-              </div>
-            </article>
+      {/* Legend - outside SVG */}
+      <div className="flex gap-8 mt-3 items-center justify-center">
+        {/* Capacity */}
+        <div className="flex items-center gap-2">
+          <div
+            className="flex-shrink-0"
+            style={{ width: "10px", height: "10px", transform: "rotate(-90.749deg)" }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="11"
+              height="11"
+              viewBox="0 0 11 11"
+              fill="none"
+              className="w-full h-full"
+            >
+              <path
+                d="M5.14354 10.0133C2.38212 10.0198 0.114272 7.78676 0.0781494 5.02557C0.0420271 2.26439 2.25131 0.0206852 5.01273 0.0141261C7.77415 0.00756694 10.042 2.24063 10.0781 5.00182C10.1142 7.76301 7.90496 10.0067 5.14354 10.0133Z"
+                fill="#475EC4"
+              />
+            </svg>
           </div>
-        </section>
+          <span
+            style={{
+              color: "#000",
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "15px",
+              fontWeight: 500,
+              lineHeight: "normal",
+            }}
+          >
+            Capacity
+          </span>
+        </div>
 
-        {/* Action Buttons */}
-        <section className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              "Add Manager",
-              "Download Report",
-              "Send Announcement",
-              "Add new PG",
-            ].map((label, idx) => (
-              <button
-                key={idx}
-                className="w-full h-20 rounded-xl border border-[#4F6BE3] bg-white shadow-md flex items-center justify-center text-[#043163] font-extrabold"
-                style={{ fontSize: "clamp(0.9rem,1.8vw,1.375rem)" }}
-              >
-                {label}
-              </button>
-            ))}
+        {/* Active Guests */}
+        <div className="flex items-center gap-2">
+          <div
+            className="flex-shrink-0"
+            style={{ width: "10px", height: "10px", transform: "rotate(-90.749deg)" }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="11"
+              height="11"
+              viewBox="0 0 11 11"
+              fill="none"
+              className="w-full h-full"
+            >
+              <path
+                d="M5.13085 10.0111C2.36943 10.0176 0.101576 7.78456 0.0654541 5.02338C0.0293318 2.26219 2.23862 0.0184879 5.00003 0.0119288C7.76145 0.00536968 10.0293 2.23844 10.0654 4.99962C10.1015 7.76081 7.89226 10.0045 5.13085 10.0111Z"
+                fill="#FFD66B"
+              />
+            </svg>
           </div>
-        </section>
+          <span
+            style={{
+              color: "#000",
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "15px",
+              fontWeight: 500,
+              lineHeight: "normal",
+            }}
+          >
+            Active Guests
+          </span>
+        </div>
+      </div>
+
+      {/* Percent row */}
+<div className="mt-6 flex items-center justify-center gap-2">
+  <div
+    className="flex-shrink-0"
+    style={{ width: "24px", height: "24px", aspectRatio: "1/1" }}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="w-full h-full"
+    >
+      <path d="M7 10H11V18.92L13.01 18.95V10H17L12 5L7 10Z" fill="#10BA2A" />
+    </svg>
+  </div>
+
+  <div
+    style={{
+      color: "#000",
+      fontFamily:
+        "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+      fontSize: "15px",
+      fontWeight: 400,
+      letterSpacing: "-0.154px",
+      fontFeatureSettings: "'liga' off, 'clig' off",
+    }}
+  >
+    7% vs last month
+  </div>
+</div>
+</div>
+
+    {/* Footer link */}
+    <div className="mt-3 text-right">
+      <a
+        href="#"
+        className="font-medium"
+        style={{
+          color: "#0F45A9",
+          fontFamily:
+            "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+          fontSize: "15px",
+          fontWeight: 500,
+          lineHeight: "12.612px",
+          textDecoration: "none",
+        }}
+      >
+        View Details →
+      </a>
+    </div>
+  </div>
+
+  {/* local styles for hover pop and bar hover movement */}
+  <style>{`
+    /* card hover pop */
+    article:hover > div {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 6px 8px 12px rgba(0,0,0,0.12);
+    }
+
+    /* bar-group hover: raises both bars slightly */
+    svg .bar-group:hover rect {
+      transform: translateY(-8px);
+      transition: transform 200ms ease;
+    }
+
+    /* ensure numeric labels follow the bars slightly on hover */
+    svg .bar-group:hover text {
+      transform: translateY(-8px);
+      transition: transform 200ms ease;
+    }
+
+    /* underline the link on hover in same color */
+    a:hover { text-decoration: underline; }
+  `}</style>
+</article>
+
+
+
+           {/* Revenue */}
+<article
+  className="rounded-[30px] flex-shrink-0"
+  style={{
+    width: "261px",
+    height: "487px",
+    border: "1px solid rgba(79, 107, 227, 0.00)",
+    background: "#FFF",
+    boxShadow: "4px 4px 4px 4px rgba(0, 0, 0, 0.10)",
+  }}
+>
+  <div className="h-full rounded-[30px] p-6 flex flex-col shadow-sm transition-transform duration-200"
+    style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", color: "#001433" }}
+  >
+    {/* Header: piggy icon + title + subtitle */}
+    <header className="flex flex-col items-center justify-center gap-2">
+      <div
+        className="flex-shrink-0"
+        style={{ width: "36.75px", height: "35.702px", aspectRatio: "36.75/35.702" }}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="37" viewBox="0 0 38 37" fill="none" className="w-full h-full">
+          <path d="M33.4375 18.4252C34.8716 17.2907 35.9846 15.8013 36.6662 14.1045C37.137 15.466 37.3733 16.999 37.375 18.7035C37.375 22.7775 35.9365 25.6335 34.4613 27.471C33.786 28.316 33.0002 29.0665 32.125 29.7022V32.4375C32.125 33.4818 31.7102 34.4833 30.9717 35.2217C30.2333 35.9601 29.2318 36.375 28.1875 36.375H26.875C26.1788 36.375 25.5111 36.0984 25.0188 35.6061C24.5266 35.1139 24.25 34.4462 24.25 33.75H19C19 34.4462 18.7234 35.1139 18.2312 35.6061C17.7389 36.0984 17.0712 36.375 16.375 36.375H15.0625C14.0182 36.375 13.0167 35.9601 12.2783 35.2217C11.5398 34.4833 11.125 33.4818 11.125 32.4375V31.8784C9.44898 31.3433 7.92705 30.4113 6.68875 29.1615C5.13737 27.5839 4.26588 25.6125 3.8275 24.3761C3.77641 24.2058 3.68582 24.05 3.56312 23.9214C3.44041 23.7928 3.28905 23.6949 3.12137 23.6359C2.40397 23.4314 1.77249 22.9993 1.32219 22.4046C0.871893 21.8098 0.627193 21.0848 0.625 20.3389V18.2546C0.625 16.7426 1.62775 15.4144 3.07937 14.9996C3.35237 14.9209 3.64638 14.6557 3.79075 14.2174C4.14513 13.149 4.825 11.5687 6.0745 10.3035C7.14911 9.22675 8.37902 8.31715 9.72325 7.60499V2.67786C9.72479 2.27889 9.84593 1.88955 10.071 1.56012C10.2961 1.2307 10.6148 0.976326 10.9859 0.829863C11.3466 0.67865 11.7435 0.635365 12.1284 0.705256C12.5133 0.775148 12.8696 0.955214 13.1541 1.22361C13.8182 1.85099 14.6897 2.59911 15.6216 3.21074C16.5797 3.83811 17.4775 4.23449 18.2099 4.30799H18.223C16.8156 6.3917 16.2027 8.91127 16.4958 11.4086C16.8134 14.1097 18.9029 15.732 20.6564 16.4591L26.9301 19.0552C28.681 19.7824 31.306 20.1105 33.4401 18.4252Z" fill="#0B2595"/>
+        </svg>
+      </div>
+      <h3 className="font-semibold text-center"
+        style={{ color: "#001433", fontFamily: "Poppins, sans-serif", fontSize: "23px", fontWeight: 600, letterSpacing: "-0.154px" }}>
+        Revenue
+      </h3>
+      <div style={{ color: "#000", fontFamily: "Poppins, sans-serif", fontSize: "18px", fontWeight: 400, letterSpacing: "-0.154px" }}>
+        INR in K
+      </div>
+    </header>
+
+{/* Body: Chart (bars now align to axis numbers) */}
+<div className="flex-1 flex items-center justify-center">
+  <div className="relative w-full max-w-[220px]"> {/* control overall chart width here */}
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+      {/* Labels column (left of vertical line) */}
+      <div style={{ width: 80, paddingTop: 6 }}>
+        <div style={{ height: 40, display: "flex", alignItems: "center", fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#000" }}>Profit</div>
+        <div style={{ height: 40, display: "flex", alignItems: "center", fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#000" }}>Expense</div>
+        <div style={{ height: 40, display: "flex", alignItems: "center", fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#000" }}>Revenue</div>
+      </div>
+
+      {/* Vertical thin line (between labels and bars) */}
+      <div style={{ width: 2, height: 144, background: "#030229", opacity: 0.08, marginTop: 4 }} />
+
+      {/* Chart column (bars + axis) */}
+      <div style={{ width: 140 /* axisWidth: tweak this to fit */ }}>
+        {/* Rows */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          {(() => {
+            const axisMax = 600;
+            const axisWidth = 140; // px - keep <= container's available width
+            const rows = [
+              { value: 200, color: "#FF794E" }, // Profit
+              { value: 300, color: "#FFC107" }, // Expense
+              { value: 500, color: "#4057BD" }, // Revenue
+            ];
+            return rows.map((r, i) => {
+              const w = Math.max(8, Math.round((r.value / axisMax) * axisWidth)); // at least 8px visible
+              return (
+                <div key={i} className="flex items-center" style={{ gap: 12 }}>
+                  <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
+                    {/* bar (div) */}
+                    <div
+                      className="rounded-md transition-transform duration-200"
+                      style={{
+                        width: w,
+                        height: 16, // matches your ~15.68px
+                        background: r.color,
+                        transform: "rotate(-1deg)", // slight tilt to match visuals
+                      }}
+                    />
+                    {/* value on right of bar (keeps inside chart area) */}
+                    <div style={{ width: 36, textAlign: "right", fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#000" }}>
+                      {r.value}
+                    </div>
+                  </div>
+                </div>
+              );
+            });
+          })()}
+        </div>
+
+        {/* X axis numbers (aligned to same axisWidth) */}
+        <div style={{ marginTop: 18 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontFamily: "Nunito, sans-serif", fontSize: 15, fontWeight: 500, color: "#000" }}>
+            <span>0</span>
+            <span>200</span>
+            <span>400</span>
+            <span>600</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    {/* Percent row */}
+    <div className="mt-4 flex items-center justify-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="15" viewBox="0 0 10 15" fill="none"
+        style={{ width: "9.126px", height: "13.95px" }}>
+        <path d="M9.25082 8.94896L5.6009 9.01074L5.47519 0.0918012L3.64068 0.0928472L3.76682 9.04178L0.126033 9.1034L4.7589 14.0256L9.25082 8.94896Z" fill="#D11A2A"/>
+      </svg>
+      <div style={{ fontFamily: "Inter, sans-serif", fontSize: "15px", fontWeight: 400, letterSpacing: "-0.154px" }}>
+        <span className="text-[#D11A2A] font-semibold mr-1">8%</span> vs last month
+      </div>
+    </div>
+
+    {/* Footer link */}
+    <div className="mt-4 text-right">
+      <a href="#" className="font-medium transition-colors duration-300 hover:underline"
+        style={{ color: "#0F45A9", fontFamily: "Inter, sans-serif", fontSize: "15px", fontWeight: 500, lineHeight: "12.612px" }}>
+        View Details →
+      </a>
+    </div>
+  </div>
+
+  {/* Hover animation */}
+  <style>{`
+    article:hover > div {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 6px 8px 12px rgba(0,0,0,0.12);
+    }
+  `}</style>
+</article>
+
+
+       {/* Overdue */}
+<article
+  className="rounded-[30px] flex-shrink-0"
+  style={{
+    width: "261px",
+    height: "487px",
+    border: "1px solid rgba(79, 107, 227, 0.00)",
+    background: "#FFF",
+    boxShadow: "4px 4px 4px rgba(0, 0, 0, 0.10)",
+  }}
+>
+  <div
+    className="h-full rounded-[30px] p-6 flex flex-col shadow-sm transition-transform duration-300"
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      color: "#001433",
+      fontFamily: "Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+      fontFeatureSettings: "'liga' off, 'clig' off",
+    }}
+  >
+    {/* Header: alert icon + title */}
+    <header className="flex flex-col items-center gap-3">
+      <div
+        className="flex-shrink-0"
+        style={{ width: "42px", height: "42px", aspectRatio: "1/1" }}
+      >
+        {/* Alert SVG (provided) */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" className="w-full h-full">
+          <path d="M22.5151 5.25004L39.1856 34.125C39.3392 34.3911 39.42 34.6929 39.42 35C39.42 35.3072 39.3392 35.609 39.1856 35.875C39.032 36.1411 38.8111 36.362 38.545 36.5156C38.279 36.6692 37.9772 36.75 37.6701 36.75H4.32906C4.02187 36.75 3.7201 36.6692 3.45407 36.5156C3.18805 36.362 2.96714 36.1411 2.81355 35.875C2.65996 35.609 2.5791 35.3072 2.5791 35C2.5791 34.6929 2.65996 34.3911 2.81356 34.125L19.4841 5.25004C19.6377 4.98403 19.8586 4.76314 20.1246 4.60956C20.3906 4.45597 20.6924 4.37512 20.9996 4.37512C21.3067 4.37512 21.6085 4.45597 21.8745 4.60956C22.1405 4.76314 22.3615 4.98403 22.5151 5.25004ZM19.2496 28V31.5H22.7496V28H19.2496ZM19.2496 15.75V24.5H22.7496V15.75H19.2496Z" fill="#0B2595"/>
+        </svg>
+      </div>
+
+      <h3
+        className="font-semibold text-center"
+        style={{
+          fontSize: "23px",
+          fontWeight: 600,
+          letterSpacing: "-0.154px",
+          color: "#001433",
+        }}
+      >
+        Overdue
+      </h3>
+    </header>
+
+    {/* Pie (donut) + center value */}
+    <div className="flex-1 flex flex-col items-center justify-center">
+      <div className="relative" style={{ width: "163px", height: "162px", flexShrink: 0 }}>
+        {/* Provided pie SVG scaled into 163x162 box */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="163" height="162" viewBox="0 0 163 162" fill="none" className="w-full h-full">
+          <path d="M163 81C163 125.735 126.511 162 81.5 162C36.4888 162 0 125.735 0 81C0 36.2649 36.4888 0 81.5 0C126.511 0 163 36.2649 163 81ZM23.748 81C23.748 112.7 49.6045 138.398 81.5 138.398C113.396 138.398 139.252 112.7 139.252 81C139.252 49.3001 113.396 23.6023 81.5 23.6023C49.6045 23.6023 23.748 49.3001 23.748 81Z" fill="#FFD66B"/>
+          <path d="M52.7342 144.119C50.0462 150.017 43.036 152.703 37.5669 149.224C24.1823 140.711 13.5161 128.44 7.00264 113.849C0.505234 99.2934 -1.49663 83.243 1.10536 67.7034C2.18144 61.2768 8.9149 57.8628 15.1232 59.8417C21.363 61.8307 24.665 68.5269 23.9819 75.0403C22.9409 84.9657 24.5117 95.0621 28.6391 104.308C32.7793 113.583 39.2839 121.536 47.4215 127.435C52.7038 131.265 55.4398 138.182 52.7342 144.119Z" fill="#FF794E"/>
+          <path d="M81.5 12.0841C81.5 5.41023 86.939 -0.0912485 93.5405 0.88882C102.248 2.18155 110.714 4.87206 118.601 8.87934C130.086 14.7155 140.014 23.1779 147.567 33.5706C155.12 43.9634 160.084 55.9897 162.049 68.6605C164.014 81.3313 162.925 94.2848 158.871 106.456C154.817 118.627 147.914 129.667 138.73 138.67C129.546 147.673 118.342 154.38 106.042 158.24C93.7407 162.101 80.6935 163.004 67.9728 160.876C59.2777 159.422 50.9049 156.579 43.1704 152.483C37.2352 149.339 36.144 141.624 40.1675 136.246C44.1575 130.913 51.6759 129.941 57.7408 132.694C62.2696 134.75 67.065 136.217 72.0089 137.044C80.9341 138.537 90.0884 137.903 98.719 135.194C107.35 132.485 115.21 127.779 121.654 121.463C128.098 115.146 132.941 107.4 135.785 98.8604C138.63 90.321 139.394 81.2325 138.015 72.3423C136.636 63.4521 133.154 55.0141 127.854 47.7223C122.555 40.4304 115.589 34.493 107.531 30.3982C103.075 28.134 98.3551 26.4689 93.4955 25.4327C86.9684 24.0409 81.5 18.758 81.5 12.0841Z" fill="#4057BD"/>
+        </svg>
+
+        {/* center amount */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div style={{ fontFamily: "Nunito, sans-serif", fontSize: "18px", fontWeight: 700, color: "#000" }}>
+            ₹1,15,000
+          </div>
+        </div>
+      </div>
+
+      {/* Legend: three lines */}
+      <div className="mt-4 flex flex-col items-start gap-3 w-full px-6">
+        <div className="flex items-center gap-3">
+          <div style={{ width: "10px", height: "10px", borderRadius: 9999 }} className="bg-[#5B93FF]" />
+          <div style={{ fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#030229", opacity: 0.7 }}>
+            &lt; 15 Days - 55%
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div style={{ width: "10px", height: "10px", borderRadius: 9999 }} className="bg-[#FF8F6B]" />
+          <div style={{ fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#030229", opacity: 0.7 }}>
+            15–30 Days - 25%
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div style={{ width: "10px", height: "10px", borderRadius: 9999 }} className="bg-[#FFD66B]" />
+          <div style={{ fontFamily: "Nunito, sans-serif", fontSize: 13, fontWeight: 500, color: "#030229", opacity: 0.7 }}>
+            &gt; 30 Days - 20%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* percent row: red down arrow + text */}
+    <div className="mt-4 text-center" style={{ fontSize: "15px", fontFamily: "Inter, sans-serif", letterSpacing: "-0.154px", color: "#000" }}>
+      <svg viewBox="0 0 11 15" className="inline-block w-3 h-3 mr-2 align-middle" style={{ verticalAlign: "middle" }}>
+        <path d="M10.1371 8.94884L6.13761 9.01061L5.99985 0.0916788L3.98963 0.0927244L4.12785 9.04166L0.138328 9.10328L5.21495 14.0255L10.1371 8.94884Z" fill="#D11A2A" />
+      </svg>
+      <span className="font-semibold text-[#D11A2A] mr-2">5%</span>
+      <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 400 }}>vs last month</span>
+    </div>
+
+    {/* footer link */}
+    <div className="mt-4 text-right">
+      <a href="#"
+         className="text-[#0F45A9] font-medium inline-block"
+         style={{ fontFamily: "Inter, sans-serif", fontSize: "15px", fontWeight: 500, lineHeight: "12.612px", textDecoration: "none" }}>
+        View Details →
+      </a>
+    </div>
+  </div>
+
+  {/* hover pop + link underline on hover */}
+  <style>{`
+    article:hover > div {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 6px 8px 12px rgba(0,0,0,0.12);
+    }
+    a:hover { text-decoration: underline; }
+  `}</style>
+</article>
+</div>
+</section>
+
+
+        {/* ----------------------
+  ACTION BUTTONS (paste here)
+  ---------------------- */}
+{/* Ensure Poppins is loaded globally for exact typography */}
+<div className="w-full px-4 py-6">
+  <div className="mx-auto max-w-screen-xl">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center">
+      {/* cards data inlined */}
+      {/* Card: Add Manager */}
+      <button
+        aria-label="Add Manager"
+        onClick={() => setIsAddManagerOpen(true)}
+        className="group w-[220px] h-[171px] flex-shrink-0 rounded-[25px] bg-white shadow-[6px_6px_6px_0_rgba(0,0,0,0.25)] relative flex flex-col items-center justify-center gap-4 transition-transform duration-200 hover:-translate-y-2 focus:outline-none"
+      >
+        {/* hover-border element */}
+        <span
+          aria-hidden="true"
+          className="absolute -inset-[1px] rounded-[25px] border-[0px] border-transparent pointer-events-none transition-all duration-200 ease-out group-hover:border-[0.7px] group-hover:border-[#FF8F6B] group-hover:opacity-100"
+        />
+
+        {/* icon */}
+        <div className="w-[42px] h-[42px] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <path d="M23.1 18.9V10.5H18.9V18.9H10.5V23.1H18.9V31.5H23.1V23.1H31.5V18.9H23.1ZM21 42C15.4305 42 10.089 39.7875 6.15076 35.8492C2.21249 31.911 0 26.5695 0 21C0 15.4305 2.21249 10.089 6.15076 6.15076C10.089 2.21249 15.4305 0 21 0C26.5695 0 31.911 2.21249 35.8492 6.15076C39.7875 10.089 42 15.4305 42 21C42 26.5695 39.7875 31.911 35.8492 35.8492C31.911 39.7875 26.5695 42 21 42Z" fill="#0B2595"/>
+          </svg>
+        </div>
+
+        {/* title */}
+        <div className="text-center font-poppins font-semibold text-[20px] leading-none" style={{ color: "#073C9E" }}>
+          Add Manager
+        </div>
+      </button>
+
+      {/* Card: Download Report */}
+      <button
+        aria-label="Download Report"
+        onClick={() => setIsDownloadOpen(true)}
+        className="group w-[220px] h-[171px] flex-shrink-0 rounded-[25px] bg-white shadow-[6px_6px_6px_0_rgba(0,0,0,0.25)] relative flex flex-col items-center justify-center gap-4 transition-transform duration-200 hover:-translate-y-2 focus:outline-none"
+      >
+        <span
+          aria-hidden="true"
+          className="absolute -inset-[1px] rounded-[25px] border-[0px] border-transparent pointer-events-none transition-all duration-200 ease-out group-hover:border-[0.7px] group-hover:border-[#FF8F6B] group-hover:opacity-100"
+        />
+
+        <div className="w-[42px] h-[42px] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <path d="M29.2373 12.957C28.9065 12.628 28.4533 12.4618 28 12.4618C27.5467 12.4618 27.0935 12.628 26.7628 12.957L22.75 16.9697V5.25C22.75 4.78587 22.5656 4.34075 22.2374 4.01256C21.9092 3.68437 21.4641 3.5 21 3.5C20.5359 3.5 20.0908 3.68437 19.7626 4.01256C19.4344 4.34075 19.25 4.78587 19.25 5.25V16.9697L15.2372 12.957C15.0751 12.7939 14.8823 12.6645 14.67 12.5762C14.4577 12.4879 14.23 12.4424 14 12.4424C13.77 12.4424 13.5423 12.4879 13.33 12.5762C13.1177 12.6645 12.9249 12.7939 12.7628 12.957C12.4347 13.2852 12.2504 13.7302 12.2504 14.1943C12.2504 14.6583 12.4347 15.1033 12.7628 15.4315L21 23.625L29.2407 15.428C29.5673 15.0995 29.7503 14.655 29.7496 14.1918C29.749 13.7286 29.5647 13.2846 29.2373 12.957ZM36.7272 28C36.7342 27.8132 36.7111 27.6265 36.659 27.447L33.159 16.947C33.043 16.5987 32.8204 16.2957 32.5226 16.0808C32.2249 15.866 31.8671 15.7503 31.5 15.75H31.1168C30.9522 16.079 30.7492 16.394 30.4745 16.6687L27.881 19.25H30.24L33.1573 28H8.8445L11.7618 19.25H14.1208L11.5255 16.6687C11.2634 16.399 11.0466 16.0888 10.8832 15.75H10.5C10.1329 15.7503 9.77511 15.866 9.47738 16.0808C9.17965 16.2957 8.95702 16.5987 8.841 16.947L5.341 27.447C5.28886 27.6265 5.26582 27.8132 5.27275 28C5.25 28 5.25 36.75 5.25 36.75C5.25 37.2141 5.43437 37.6592 5.76256 37.9874C6.09075 38.3156 6.53587 38.5 7 38.5H35C35.4641 38.5 35.9093 38.3156 36.2374 37.9874C36.5656 37.6592 36.75 37.2141 36.75 36.75C36.75 36.75 36.75 28 36.7272 28Z" fill="#0B2595"/>
+          </svg>
+        </div>
+
+        <div className="text-center font-poppins font-semibold text-[20px] leading-none" style={{ color: "#073C9E" }}>
+          Download Report
+        </div>
+      </button>
+
+      {/* Card: Send Announcement (wider 220px) */}
+      <button
+        aria-label="Send Announcement"
+        onClick={() => setIsSendOpen(true)}
+        className="group w-[230px] h-[171px] flex-shrink-0 rounded-[25px] bg-white shadow-[6px_6px_6px_0_rgba(0,0,0,0.25)] relative flex flex-col items-center justify-center gap-4 transition-transform duration-200 hover:-translate-y-2 focus:outline-none"
+      >
+        <span
+          aria-hidden="true"
+          className="absolute -inset-[1px] rounded-[25px] border-[0px] border-transparent pointer-events-none transition-all duration-200 ease-out group-hover:border-[0.7px] group-hover:border-[#FF8F6B] group-hover:opacity-100"
+        />
+
+        <div className="w-[42px] h-[42px] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <path fillRule="evenodd" clipRule="evenodd" d="M4.10359 3.92874C4.36481 3.70183 4.68743 3.55744 5.03069 3.51383C5.37395 3.47022 5.72243 3.52935 6.03209 3.68375L37.5321 19.4337C37.8233 19.5789 38.0683 19.8023 38.2395 20.079C38.4108 20.3557 38.5015 20.6746 38.5015 21C38.5015 21.3254 38.4108 21.6443 38.2395 21.921C38.0683 22.1977 37.8233 22.4211 37.5321 22.5662L6.03209 38.3162C5.72245 38.4712 5.37382 38.5308 5.03029 38.4875C4.68677 38.4442 4.36381 38.3 4.10227 38.0732C3.84072 37.8463 3.65236 37.5469 3.56101 37.2129C3.46966 36.879 3.47944 36.5254 3.58909 36.197L8.07259 22.75H17.4998C17.964 22.75 18.4091 22.5656 18.7373 22.2374C19.0655 21.9092 19.2498 21.4641 19.2498 21C19.2498 20.5359 19.0655 20.0907 18.7373 19.7626C18.4091 19.4344 17.964 19.25 17.4998 19.25H8.07259L3.58734 5.80299C3.47825 5.47472 3.4689 5.12147 3.56048 4.78788C3.65205 4.45429 3.84219 4.15532 4.10359 3.92874Z" fill="#0B2595"/>
+          </svg>
+        </div>
+
+        <div className="text-center font-poppins font-semibold text-[20px] leading-none" style={{ color: "#073C9E" }}>
+          Send Announcement
+        </div>
+      </button>
+
+      {/* Card: Add New PG */}
+      <button
+        aria-label="Add New PG"
+        onClick={() => setIsAddNewPGOpen(true)}
+        className="group w-[220px] h-[171px] flex-shrink-0 rounded-[25px] bg-white shadow-[4px_4px_4px_0_rgba(0,0,0,0.25)] relative flex flex-col items-center justify-center gap-4 transition-transform duration-200 hover:-translate-y-2 focus:outline-none"
+      >
+        <span
+          aria-hidden="true"
+          className="absolute -inset-[1px] rounded-[25px] border-[0px] border-transparent pointer-events-none transition-all duration-200 ease-out group-hover:border-[0.7px] group-hover:border-[#FF8F6B] group-hover:opacity-100"
+        />
+
+        <div className="w-[42px] h-[42px] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <path d="M16.1962 5.00593C17.5733 3.94589 19.2622 3.37109 21 3.37109C22.7378 3.37109 24.4267 3.94589 25.8037 5.00593L34.9912 12.0751C35.947 12.8108 36.7211 13.7564 37.2536 14.8387C37.7861 15.9209 38.0628 17.1111 38.0625 18.3173V30.1876C38.0625 32.2761 37.2328 34.2792 35.756 35.756C34.2791 37.2329 32.2761 38.0626 30.1875 38.0626H11.8125C9.72392 38.0626 7.72088 37.2329 6.24403 35.756C4.76719 34.2792 3.9375 32.2761 3.9375 30.1876V18.3173C3.93718 17.1111 4.21395 15.9209 4.74645 14.8387C5.27895 13.7564 6.05295 12.8108 7.00875 12.0751L16.1962 5.00593ZM18.375 21.0001C16.5638 21.0001 15.0938 22.4701 15.0938 24.2813V34.1251H26.9062V24.2813C26.9062 22.4701 25.4363 21.0001 23.625 21.0001H18.375Z" fill="#0B2595"/>
+          </svg>
+        </div>
+
+        <div className="text-center font-poppins font-semibold text-[20px] leading-none" style={{ color: "#073C9E" }}>
+          Add New PG
+        </div>
+      </button>
+
+      {/* Card: Add Guest */}
+      <button
+        aria-label="Add Guest"
+        onClick={() => setIsAddGuestOpen(true)}
+        className="group w-[220px] h-[171px] flex-shrink-0 rounded-[25px] bg-white shadow-[6px_6px_6px_0_rgba(0,0,0,0.25)] relative flex flex-col items-center justify-center gap-4 transition-transform duration-200 hover:-translate-y-2 focus:outline-none"
+      >
+        <span
+          aria-hidden="true"
+          className="absolute -inset-[1px] rounded-[25px] border-[0px] border-transparent pointer-events-none transition-all duration-200 ease-out group-hover:border-[0.7px] group-hover:border-[#FF8F6B] group-hover:opacity-100"
+        />
+
+        <div className="w-[42px] h-[42px] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <path d="M13.125 11.375C13.125 15.7168 16.6582 19.25 21 19.25C25.3417 19.25 28.875 15.7168 28.875 11.375C28.875 7.03325 25.3417 3.5 21 3.5C16.6582 3.5 13.125 7.03325 13.125 11.375ZM35 36.75H36.75V35C36.75 28.2467 31.2533 22.75 24.5 22.75H17.5C10.745 22.75 5.25 28.2467 5.25 35V36.75H35Z" fill="#0B2595"/>
+          </svg>
+        </div>
+
+        <div className="text-center font-poppins font-semibold text-[20px] leading-none" style={{ color: "#073C9E" }}>
+          Add Guest
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+{/* ----------------------
+  END ACTION BUTTONS
+  ---------------------- */}
+
+{/* Add Manager modal */}
+<AddManagerModal
+  open={isAddManagerOpen}
+  onClose={() => setIsAddManagerOpen(false)}
+  onSubmit={(payload) => {
+    // handle payload (call API etc). example:
+    console.log("Add Manager payload:", payload);
+    // close modal after handling
+    setIsAddManagerOpen(false);
+  }}
+/>
+
+<DownloadReportModal
+  open={isDownloadOpen}
+  onClose={() => setIsDownloadOpen(false)}
+  onSubmit={async (payload) => {
+    // call backend to generate / return file (payload contains period, customFrom, customTo, include, format)
+    // return a promise if async so modal shows loading state
+    console.log("Download payload:", payload);
+    // example: await api.downloadReport(payload);
+  }}
+/>
+
+{/* Send Announcement modal */}
+<SendAnnouncementModal
+  open={isSendOpen}
+  onClose={() => setIsSendOpen(false)}
+  onSubmit={async (payload) => {
+    // payload = { audience, category, message }
+    // TODO: call your API to send announcement here, e.g. await api.sendAnnouncement(payload);
+    console.log("Send announcement payload:", payload);
+
+    try {
+      // simulate network work (remove in production)
+      // await new Promise((r) => setTimeout(r, 600));
+
+      // close modal and show success popup
+      setIsSendOpen(false);
+      setAnnouncementSuccess(true);
+    } catch (err) {
+      console.error("Failed to send announcement", err);
+      // optionally show an error toast / message
+    }
+  }}
+/>
+
+{/* Announcement Success small dialog */}
+        {announcementSuccess && (
+          <div className="fixed inset-0 z-60 grid place-items-center bg-black/30 p-4">
+            <div className="w-full max-w-sm rounded-2xl bg-white shadow-xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b">
+                <h3 className="text-lg font-semibold text-gray-900">Announcement Sent</h3>
+                <button
+                  type="button"
+                  onClick={() => setAnnouncementSuccess(false)}
+                  className="h-9 w-9 grid place-items-center rounded-full hover:bg-gray-100"
+                >
+                  <svg viewBox="0 0 20 20" className="h-5 w-5">
+                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-6 py-5">
+                <p className="text-sm text-gray-700">Your announcement was sent successfully to the selected audience.</p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t">
+                <button
+                  onClick={() => setAnnouncementSuccess(false)}
+                  className="px-4 py-2 rounded-lg bg-[#605BFF] text-white hover:bg-[#5048e6]"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <AddNewPGModal
+  open={isAddNewPGOpen}
+  onClose={() => setIsAddNewPGOpen(false)}
+  onSubmit={async (payload) => {
+    // handle payload here (create PG or save draft)
+    // payload contains pgName, shortDescription, fullDescription, totalRooms, totalBeds, amenities, assignManager, defaultRent, bedsAvailable, photos (names), complianceFiles (names)
+    console.log("Create PG payload:", payload);
+
+    try {
+      // e.g. await api.createPG(payload);
+      // show toast / UI feedback as needed
+      setIsAddNewPGOpen(false);
+    } catch (err) {
+      console.error("Failed to create PG", err);
+    }
+  }}
+/>
+
+<AddGuestModal
+  open={isAddGuestOpen}
+  onClose={() => setIsAddGuestOpen(false)}
+  onSubmit={async (payload) => {
+    // payload contains the guest data; send to backend
+    console.log("Create guest payload:", payload);
+
+    try {
+      // Example: await api.createGuest(payload);
+      setIsAddGuestOpen(false);
+    } catch (err) {
+      console.error("Failed to create guest", err);
+    }
+  }}
+/>
+
 
         {/* Tables */}
         <Upcoming/>
