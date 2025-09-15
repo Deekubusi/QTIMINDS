@@ -1,8 +1,16 @@
-// Pending.jsx (drop-in, prop-based)
-import React from "react";
+// Pending.jsx
+import { ArrowLeft, ChevronsDown, ChevronsUp } from "lucide-react";
+import { useState } from "react";
 import {
-  PieChart, Pie, Cell, ResponsiveContainer,
-  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis, YAxis
 } from "recharts";
 
 export default function Pending({
@@ -20,39 +28,132 @@ export default function Pending({
     { m: "JAN", v: 20 }, { m: "FEB", v: 32 }, { m: "MAR", v: 45 },
     { m: "APR", v: 78 }, { m: "MAY", v: 60 }, { m: "JUN", v: 35 }, { m: "JUL", v: 48 },
   ],
-  rows = [], // [{guest, room, rent, due, date, overdue, phone, email}]
+  rows = [],
 }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const Card = ({ children, className = "" }) => (
+    <div
+      className={`bg-white rounded-2xl p-6 shadow-[8px_8px_8px_0px_rgba(0,0,0,0.25)] border-[0.7px] border-gray-200 hover:border-[#FF8F6B] transition-colors ${className}`}
+    >
+      {children}
+    </div>
+  );
+
+  const CardTitle = ({ children }) => (
+    <div className="relative inline-block">
+      <div className="absolute inset-0 bg-sky-600 opacity-10 rounded-[10px]" />
+      <h2 className="relative text-lg font-semibold text-gray-800 px-3 py-1">{children}</h2>
+    </div>
+  );
+
+  const CardHeaderSmall = ({ children }) => <div className="mb-6">{children}</div>;
+
   const Pill = ({ children }) => (
     <span className="inline-block rounded-xl bg-[#E9F2FF] px-4 py-2 text-[#0B63F6] font-semibold">
       {children}
     </span>
   );
-  const Legend = ({ items }) => (
+
+  const LegendCompact = ({ items }) => (
     <ul className="space-y-3">
       {items.map(i => (
-        <li key={i.name} className="flex items-center gap-3 text-slate-700">
-          <span className="inline-block size-3 rounded-full" style={{ background: i.color }} />
-          <span>{i.name} - {i.value}%</span>
+        <li key={i.name} className="flex items-center gap-3 text-slate-700 whitespace-nowrap">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: i.color }} />
+          <span className="text-sm">{i.name} - {i.value}%</span>
         </li>
       ))}
     </ul>
   );
+
+  const Legend = ({ items }) => (
+    <ul className="space-y-3">
+      {items.map(i => (
+        <li key={i.name} className="flex items-center gap-3 text-slate-700">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: i.color }} />
+          <span className="text-sm">{i.name} - {i.value}%</span>
+        </li>
+      ))}
+    </ul>
+  );
+
   const rupee = n => n?.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
 
+  const defaultDefaulters = [
+    {
+      guest: "Arrora Gaur",
+      room: "101-A",
+      rent: 8000,
+      due: 8000,
+      date: "12 July, 2025",
+      overdue: "12 Days",
+      phone: "+910000000001",
+      email: "arora@example.com",
+    },
+    {
+      guest: "Priya Sharma",
+      room: "102-B",
+      rent: 7500,
+      due: 7500,
+      date: "05 July, 2025",
+      overdue: "20 Days",
+      phone: "+910000000002",
+      email: "priya@example.com",
+    },
+    {
+      guest: "Rahul Verma",
+      room: "103-A",
+      rent: 9000,
+      due: 4500,
+      date: "01 Aug, 2025",
+      overdue: "8 Days",
+      phone: "+910000000003",
+      email: "rahul@example.com",
+    },
+    {
+      guest: "Sneha Reddy",
+      room: "104-C",
+      rent: 8500,
+      due: 8500,
+      date: "20 June, 2025",
+      overdue: "28 Days",
+      phone: "+910000000004",
+      email: "sneha@example.com",
+    },
+    {
+      guest: "Karthik Dixith",
+      room: "105-B",
+      rent: 8000,
+      due: 4000,
+      date: "28 July, 2025",
+      overdue: "6 Days",
+      phone: "+910000000005",
+      email: "karthik@example.com",
+    },
+  ];
+
+  const inRows = rows.length ? rows : defaultDefaulters;
+  const visibleRows = expanded ? inRows : inRows.slice(0, 2);
+  const remaining = Math.max(inRows.length - 2, 0);
+
   return (
-    <div className="min-h-screen w-full bg-[#F7F9FC] px-6 pb-10 pt-6 lg:px-10">
+    <div className="min-h-screen bg-[#E7EFF7] p-6 lg:p-10">
+      {/* header */}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Pending Dues</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-800">Pending Dues</h1>
         <button onClick={() => window.history.back()}
-          className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-          Back
+          className="flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-200">
+          <ArrowLeft size={16} /> Back
         </button>
       </div>
 
+      {/* top cards */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-          <div className="mb-6"><Pill>Pending By Days</Pill></div>
+        <Card>
+          <CardHeaderSmall>
+            <CardTitle>Pending By Days</CardTitle>
+          </CardHeaderSmall>
+
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
             <div className="h-48 md:h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -66,13 +167,20 @@ export default function Pending({
             </div>
             <Legend items={byDays} />
           </div>
-        </div>
+        </Card>
 
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-          <div className="mb-6"><Pill>Pending Dues By Room Category</Pill></div>
-          <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
-            <Legend items={byRoom} />
-            <div className="h-48 md:h-56">
+        <Card>
+          <CardHeaderSmall>
+            <CardTitle>Pending Dues By Room Category</CardTitle>
+          </CardHeaderSmall>
+
+          {/* Adjust layout so legend stays single-line: legend left (fixed width), pie right */}
+          <div className="flex items-center gap-6">
+            <div className="max-w-[240px] flex-shrink-0">
+              {/* Force no-wrap on legend items so they remain single-line */}
+              <LegendCompact items={byRoom} />
+            </div>
+            <div className="flex-1 h-48 md:h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={byRoom} dataKey="value" innerRadius="60%" outerRadius="85%"
@@ -83,10 +191,13 @@ export default function Pending({
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-          <div className="mb-6"><Pill>Monthly Trend Analysis</Pill></div>
+        <Card>
+          <CardHeaderSmall>
+            <CardTitle>Monthly Trend Analysis</CardTitle>
+          </CardHeaderSmall>
+
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trend} margin={{ left: -20, right: 10, top: 10 }}>
@@ -100,71 +211,69 @@ export default function Pending({
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </Card>
       </div>
 
-      <div className="mt-10 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-        <h2 className="mb-4 text-xl font-bold text-slate-900">Defaulter List</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead>
-              <tr className="text-slate-500">
-                <th className="px-4 py-3 font-semibold">Guest Name</th>
-                <th className="px-4 py-3 font-semibold">Room/Bed</th>
-                <th className="px-4 py-3 font-semibold">Rent Amount</th>
-                <th className="px-4 py-3 font-semibold">Pending Amount</th>
-                <th className="px-4 py-3 font-semibold">Due Date</th>
-                <th className="px-4 py-3 font-semibold">Days Overdue</th>
-                <th className="px-4 py-3 font-semibold">Contact</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(rows.length ? rows : [{
-                guest:"Arrora gaur", room:"101-A", rent:8000, due:8000,
-                date:"12 July, 2025", overdue:"12 Days", phone:"+910000000000", email:"guest@example.com"
-              }]).map((r, i) => (
-                <tr key={r.guest + i} className="border-t border-slate-100 text-slate-700 hover:bg-slate-50/60">
-                  <td className="px-4 py-4">{r.guest}</td>
-                  <td className="px-4 py-4">{r.room}</td>
-                  <td className="px-4 py-4">{rupee(r.rent)}</td>
-                  <td className="px-4 py-4">{rupee(r.due)}</td>
-                  <td className="px-4 py-4">
-                    <span className="inline-flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" className="text-[#0B63F6]">
-                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v13a3 3 0 003 3h12a3 3 0 003-3V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"
-                              fill="currentColor"/>
-                      </svg>
-                      {r.date}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4">{r.overdue}</td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-3">
-                      <a className="rounded-full p-2 ring-1 ring-slate-200 hover:bg-slate-100" href="#" title="Profile">
-                        <svg width="16" height="16" viewBox="0 0 24 24">
-                          <path d="M12 12a5 5 0 10-5-5 5 5 0 005 5zm0 2c-4.33 0-8 2.17-8 5v1h16v-1c0-2.83-3.67-5-8-5z" fill="currentColor"/>
-                        </svg>
-                      </a>
-                      <a className="rounded-full p-2 ring-1 ring-slate-200 hover:bg-slate-100"
-                         href={r.phone ? `tel:${r.phone}` : "#"} title="Call">
-                        <svg width="16" height="16" viewBox="0 0 24 24">
-                          <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.56.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.56 1 1 0 01-.25 1.01z"
-                                fill="currentColor"/>
-                        </svg>
-                      </a>
-                      <a className="rounded-full p-2 ring-1 ring-slate-200 hover:bg-slate-100"
-                         href={r.email ? `mailto:${r.email}` : "#"} title="Mail">
-                        <svg width="16" height="16" viewBox="0 0 24 24">
-                          <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"
-                                fill="currentColor"/>
-                        </svg>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Defaulter list card (no hover effect) */}
+      <div className="mt-10">
+        <div className="relative bg-white rounded-[20px] p-6 border-[0.7px] border-gray-200 shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">Defaulter List</h2>
+          </div>
+
+          {/* table wrapper */}
+          <div className="overflow-x-auto">
+            <div className="overflow-hidden rounded-[20px] shadow-[0_10px_20px_rgba(0,0,0,0.04)]">
+              <table className="min-w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Guest Name</th>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Room/Bed</th>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Rent Amount</th>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Pending Amount</th>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Due Date</th>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Days Overdue</th>
+                    <th className="bg-blue-600 text-white text-left px-6 py-3">Contact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleRows.map((r, i) => (
+                    <tr key={r.guest + i} className="border-t border-slate-100 text-slate-700 hover:bg-slate-50/60">
+                      <td className="px-6 py-4">{r.guest}</td>
+                      <td className="px-6 py-4">{r.room}</td>
+                      <td className="px-6 py-4">{rupee(r.rent)}</td>
+                      <td className="px-6 py-4">{rupee(r.due)}</td>
+                      <td className="px-6 py-4">{r.date}</td>
+                      <td className="px-6 py-4">{r.overdue}</td>
+                      <td className="px-6 py-4">{r.phone}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* view more / less button positioned bottom-left (slightly left of table) */}
+          {inRows.length > 2 && (
+            <div className="absolute left-6 bottom-4">
+              <button
+                onClick={() => setExpanded(v => !v)}
+                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800"
+              >
+                {expanded ? (
+                  <>
+                    View less
+                    <ChevronsUp className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                  </>
+                ) : (
+                  <>
+                    View more ({remaining})
+                    <ChevronsDown className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
