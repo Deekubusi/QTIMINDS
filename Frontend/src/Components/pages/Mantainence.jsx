@@ -84,24 +84,24 @@ function DueBadge({ date }) {
   if (diff === null) return null;
   if (diff < 0)
     return (
-      <span className="ml-2 rounded-full px-2 py-0.5 text-[11px] font-medium bg-rose-100 text-rose-700">
+      <span className="rounded-full px-2.5 py-1 text-[11px] font-medium bg-rose-100 text-rose-700">
         Overdue {Math.abs(diff)}d
       </span>
     );
   if (diff === 0)
     return (
-      <span className="ml-2 rounded-full px-2 py-0.5 text-[11px] font-medium bg-indigo-100 text-indigo-700">
+      <span className="rounded-full px-2.5 py-1 text-[11px] font-medium bg-indigo-100 text-indigo-700">
         Due today
       </span>
     );
   if (diff <= 7)
     return (
-      <span className="ml-2 rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700">
+      <span className="rounded-full px-2.5 py-1 text-[11px] font-medium bg-amber-100 text-amber-700">
         Due in {diff}d
       </span>
     );
   return (
-    <span className="ml-2 rounded-full px-2 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-700">
+    <span className="rounded-full px-2.5 py-1 text-[11px] font-medium bg-gray-100 text-gray-700">
       In {diff}d
     </span>
   );
@@ -227,12 +227,17 @@ export default function MaintenanceAlertsDashboard() {
   const [assignName, setAssignName] = useState("");
 
   const [alertFilter, setAlertFilter] = useState("all"); // all | critical | week
+  const [expandedAlertId, setExpandedAlertId] = useState(null);
 
   /* --- Helpers --- */
   const priorityToSeverity = (p) => {
     if (p.startsWith("P1")) return "high";
     if (p.startsWith("P2")) return "medium";
     return "low";
+  };
+
+  const toggleAlertExpansion = (id) => {
+    setExpandedAlertId((prevId) => (prevId === id ? null : id));
   };
 
   /* --- Actions --- */
@@ -365,10 +370,8 @@ export default function MaintenanceAlertsDashboard() {
   };
 
   return (
-  <div className="w-full min-w-0 space-y-6 sm:space-y-10">
-
+    <div className="w-full min-w-0 space-y-6 sm:space-y-10">
       <div className="w-full space-y-10 px-3 sm:px-6">
-       
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -394,7 +397,7 @@ export default function MaintenanceAlertsDashboard() {
             <select
               value={alertFilter}
               onChange={(e) => setAlertFilter(e.target.value)}
-              className="bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="hidden sm:block bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="all">All alerts</option>
               <option value="critical">Critical only</option>
@@ -412,7 +415,7 @@ export default function MaintenanceAlertsDashboard() {
         </div>
 
         {/* ---------- Alerts card (list only) ---------- */}
-        <section className="bg-white rounded-xl shadow p-4 sm:p-6">
+        <section className="bg-white rounded-[20px] shadow-[8px_8px_8px_0px_rgba(0,0,0,0.25)] p-4 sm:p-6">
           {filteredAlerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-10">
               <div className="text-2xl">🎉</div>
@@ -424,12 +427,52 @@ export default function MaintenanceAlertsDashboard() {
               </p>
             </div>
           ) : (
-            <div className="border rounded-lg p-4 sm:p-5">
-              <ul className="space-y-3">
-                {filteredAlerts.map((a) => (
-                  <li key={a.id} className="flex items-start text-gray-700">
+            <ul className="space-y-4">
+              {filteredAlerts.map((a) => (
+                <li key={a.id}>
+                  {/* --- MOBILE VIEW --- */}
+                  <div className="sm:hidden">
+                    <div
+                      className="flex items-start gap-3 cursor-pointer"
+                      onClick={() => toggleAlertExpansion(a.id)}
+                    >
+                      <span
+                        className={`mt-1 flex-shrink-0 h-2.5 w-2.5 rounded-full ${
+                          a.severity === "high"
+                            ? "bg-rose-500"
+                            : a.severity === "medium"
+                            ? "bg-amber-400"
+                            : "bg-yellow-300"
+                        }`}
+                      />
+                      <p
+                        className={`flex-1 text-sm text-gray-700 leading-relaxed ${
+                          expandedAlertId !== a.id
+                            ? "truncate"
+                            : "whitespace-normal"
+                        }`}
+                      >
+                        {a.message}
+                      </p>
+                    </div>
+                    <div className="pl-[22px] mt-2 flex items-center justify-between">
+                      <DueBadge date={a.date} />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resolveAlert(a.id);
+                        }}
+                        className="text-xs px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
+                      >
+                        Resolve
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* --- DESKTOP VIEW --- */}
+                  <div className="hidden sm:flex items-center w-full gap-4">
                     <span
-                      className={`mt-2 mr-3 inline-block h-2.5 w-2.5 rounded-full ${
+                      className={`flex-shrink-0 h-2.5 w-2.5 rounded-full ${
                         a.severity === "high"
                           ? "bg-rose-500"
                           : a.severity === "medium"
@@ -437,24 +480,20 @@ export default function MaintenanceAlertsDashboard() {
                           : "bg-yellow-300"
                       }`}
                     />
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-1">
-                      <span className="flex-1">
-                        {a.message}
-                        <DueBadge date={a.date} />
-                      </span>
-                      <div className="flex gap-2 ml-2">
-                        <button
-                          onClick={() => resolveAlert(a.id)}
-                          className="text-xs px-2 py-1 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                        >
-                          Resolve
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    <span className="flex-1 text-sm text-gray-700">
+                      {a.message}
+                      <DueBadge date={a.date} />
+                    </span>
+                    <button
+                      onClick={() => resolveAlert(a.id)}
+                      className="text-xs px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
+                    >
+                      Resolve
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </section>
 
@@ -486,63 +525,66 @@ export default function MaintenanceAlertsDashboard() {
 
         {/* ---------- Filters row ---------- */}
         <div
-  className="
+          className="
     grid gap-4 mb-4
     grid-cols-1
     sm:[grid-template-columns:repeat(2,minmax(0,1fr))]
     md:[grid-template-columns:repeat(3,minmax(0,1fr))]
     lg:[grid-template-columns:minmax(220px,1fr)_200px_200px_repeat(2, 180px)]
   "
->
-  <select
-    value={status}
-    onChange={(e) => setStatus(e.target.value)}
-    className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
-  >
-    <option value="" disabled hidden>Status</option>
-    <option value="All">All</option>
-    {STATUS.filter((s) => s !== "All").map((s) => (
-      <option key={s} value={s}>{s}</option>
-    ))}
-  </select>
+        >
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+          >
+            <option value="" disabled hidden>
+              Status
+            </option>
+            <option value="All">All</option>
+            {STATUS.filter((s) => s !== "All").map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
 
-  <select
-    value={category}
-    onChange={(e) => setCategory(e.target.value)}
-    className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
-  >
-    <option value="" disabled hidden>Category</option>
-    <option value="All">All</option>
-    {CATEGORY.filter((c) => c !== "All").map((c) => (
-      <option key={c} value={c}>{c}</option>
-    ))}
-  </select>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+          >
+            <option value="" disabled hidden>
+              Category
+            </option>
+            <option value="All">All</option>
+            {CATEGORY.filter((c) => c !== "All").map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
 
-  <input
-    type="date"
-    value={from}
-    onChange={(e) => setFrom(e.target.value)}
-    className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
-  />
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+          />
 
-  <input
-    type="date"
-    value={to}
-    onChange={(e) => setTo(e.target.value)}
-    className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
-  />
-</div>
-
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="w-full min-w-[160px] bg-white rounded-lg shadow px-3 py-2 text-sm text-gray-700 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+          />
+        </div>
 
         {/* ---------- Requests table ---------- */}
-        <section className="bg-white rounded-xl shadow overflow-hidden">
+        <section className="bg-white rounded-[20px] shadow-[8px_8px_8px_0px_rgba(0,0,0,0.25)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="sticky top-0 bg-[#073C9E] text-white">
-
-
-
-
                 <tr className="text-white">
                   <th className="text-left font-semibold px-6 py-3">ID</th>
                   <th className="text-left font-semibold px-6 py-3">Date</th>
