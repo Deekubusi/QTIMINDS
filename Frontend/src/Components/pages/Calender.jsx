@@ -1,223 +1,200 @@
-import React, { useState, useEffect } from "react";
-import { ChevronRight, ChevronLeft, Calendar, Plus, X } from "lucide-react";
-import * as Dialog from "@radix-ui/react-dialog";
+import { Calendar, ChevronRight, ChevronLeft, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
-export default function Calendar1() {
-  const [startDate] = useState(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
+function CreateEventModal({ onClose, onAddEvent }) {
+  const [date, setDate] = useState("");
+  const [title, setTitle] = useState("");
 
-  const [events, setEvents] = useState({
-    "2025-09-12": ["Workshop", "Meeting"],
-  });
-
-  const [open, setOpen] = useState(false);
-  const [newEventDate, setNewEventDate] = useState("");
-  const [newEventText, setNewEventText] = useState("");
-
-  const [visibleStart, setVisibleStart] = useState(0);
-  const [daysToShow, setDaysToShow] = useState(3);
-
-  useEffect(() => {
-    const updateDaysToShow = () => {
-      if (window.innerWidth < 640) setDaysToShow(1);
-      else if (window.innerWidth < 1024) setDaysToShow(2);
-      else setDaysToShow(3);
-    };
-    updateDaysToShow();
-    window.addEventListener("resize", updateDaysToShow);
-    return () => window.removeEventListener("resize", updateDaysToShow);
-  }, []);
-
-  useEffect(() => {
-    setVisibleStart(0);
-  }, [daysToShow]);
-
-  const formatLocalYMD = (d) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-  };
-
-  const parseLocalYMD = (ymd) => {
-    const [y, m, d] = ymd.split("-").map(Number);
-    return new Date(y, m - 1, d);
-  };
-
-  const dates = Array.from({ length: 60 }, (_, i) => {
-    const d = new Date(startDate);
-    d.setDate(startDate.getDate() + i);
-    return formatLocalYMD(d);
-  });
-
-  const addEvent = () => {
-    if (!newEventDate || !newEventText) return;
-    setEvents((prev) => ({
-      ...prev,
-      [newEventDate]: [...(prev[newEventDate] || []), newEventText],
-    }));
-    setOpen(false);
-    setNewEventDate("");
-    setNewEventText("");
-  };
-
-  const removeEvent = (date, index) => {
-    setEvents((prev) => {
-      const updated = { ...prev };
-      updated[date].splice(index, 1);
-      if (updated[date].length === 0) delete updated[date];
-      return updated;
-    });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!date || !title) return;
+    onAddEvent({ date, title });
+    setDate("");
+    setTitle("");
+    onClose();
   };
 
   return (
-    <div className="relative w-full max-w-[1290px] mx-auto p-6 bg-[#EAF3FF] rounded-[24px]">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="font-semibold text-lg flex items-center gap-2">
-          <Calendar className="w-5 h-5" /> Upcoming Events Panel
-        </h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+     
+         <div className="w-full max-w-md bg-white rounded-2xl  border-bg-[#073C9E] shadow-lg p-6 relative">
+        {/* Close Button */}
         <button
-          onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-black"
         >
-          <Plus className="w-4 h-4" /> Add Event
+          <X className="w-5 h-5" />
         </button>
-      </div>
 
-      {/* Calendar as cards */}
-      <div className="relative bg-white rounded-[24px] shadow-lg p-6 overflow-visible">
-        {/* Left Arrow */}
-        {visibleStart > 0 && (
+        <h2 className="text-lg font-semibold mb-4 flex items-center">
+          <Calendar className="w-5 h-5 mr-2 text-[#073C9E]" />
+          Create New Event
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Date Picker */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Select Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#073C9E] focus:outline-none"
+            />
+          </div>
+
+          {/* Event Title */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Event Title</label>
+            <input
+              type="text"
+              placeholder="Eg: Fan not working in 101"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#073C9E] focus:outline-none"
+            />
+          </div>
+
+          {/* Submit */}
           <button
-            onClick={() =>
-              setVisibleStart((prev) => Math.max(0, prev - daysToShow))
-            }
-            className="absolute top-1/2 -translate-y-1/2 left-[-30px] 
-                       bg-white border border-gray-200 p-3 rounded-full shadow-md 
-                       hover:bg-gray-100 z-20"
+            type="submit"
+            className="w-full bg-[#073C9E] text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            <ChevronLeft className="w-6 h-6 text-blue-600" />
+            Add Event
           </button>
-        )}
-
-        {/* Right Arrow */}
-        {visibleStart + daysToShow < dates.length && (
-          <button
-            onClick={() =>
-              setVisibleStart((prev) =>
-                Math.min(prev + daysToShow, dates.length - daysToShow)
-              )
-            }
-            className="absolute top-1/2 -translate-y-1/2 right-[-30px] 
-                       bg-white border border-gray-200 p-3 rounded-full shadow-md 
-                       hover:bg-gray-100 z-20"
-          >
-            <ChevronRight className="w-6 h-6 text-blue-600" />
-          </button>
-        )}
-
-        {/* Card container */}
-        <div className="flex gap-5 transition-transform duration-300">
-          {dates
-            .slice(visibleStart, visibleStart + daysToShow)
-            .map((date) => {
-              const localDate = parseLocalYMD(date);
-              return (
-                <div
-                  key={date}
-                  className="flex-1 min-w-[240px] bg-white border border-gray-200 shadow-md 
-                             hover:border-blue-600 hover:shadow-lg transition-all 
-                             p-5 rounded-[20px]"
-                >
-                  {/* Date header */}
-                  <div className="text-center font-semibold text-black mb-2">
-                    {localDate.toLocaleDateString("en-GB", {
-                      weekday: "short",
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </div>
-
-                  {/* Events */}
-                  <div className="space-y-2">
-                    {(events[date] || []).length > 0 ? (
-                      events[date].map((ev, i) => (
-                        <div
-                          key={i}
-                          className="flex justify-between items-center bg-blue-50 px-3 py-1 
-                                     text-blue-600 text-sm font-medium rounded border border-blue-100 shadow-sm"
-                        >
-                          <span className="truncate" title={ev}>
-                            {ev}
-                          </span>
-                          <button
-                            onClick={() => removeEvent(date, i)}
-                            className="ml-2 text-blue-600 hover:text-blue-800"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-400 text-sm text-center">
-                        No events
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-        </div>
+        </form>
       </div>
-
-      {/* Add Event Modal */}
-      <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed top-1/2 left-1/2 bg-white rounded-lg p-6 shadow-lg transform -translate-x-1/2 -translate-y-1/2 w-[400px]">
-            <Dialog.Title className="font-bold text-lg mb-4">
-              Add New Event
-            </Dialog.Title>
-
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium">Select Date</label>
-                <input
-                  type="date"
-                  value={newEventDate}
-                  onChange={(e) => setNewEventDate(e.target.value)}
-                  className="w-full border rounded p-2"
-                  min={formatLocalYMD(startDate)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Event Title</label>
-                <input
-                  type="text"
-                  value={newEventText}
-                  onChange={(e) => setNewEventText(e.target.value)}
-                  className="w-full border rounded p-2"
-                  placeholder="Enter event name"
-                />
-              </div>
-              <button
-                onClick={addEvent}
-                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
-              >
-                Save Event
-              </button>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+ 
+     
     </div>
   );
 }
 
+export default function UpcomingEventsPanel() {
+  const today = new Date();
+  const dates = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    return d.toISOString().split("T")[0];
+  });
 
+  const [visibleStart, setVisibleStart] = useState(0);
+  const [daysToShow, setDaysToShow] = useState(3);
+  const [events, setEvents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) setDaysToShow(1);
+      else setDaysToShow(3);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
+  const handleAddEvent = (newEvent) => {
+    setEvents((prev) => [...prev, newEvent]);
+  };
+
+  // ⬅️ added: remove event handler
+  const handleRemoveEvent = (date, title) => {
+    setEvents((prev) => prev.filter((e) => !(e.date === date && e.title === title)));
+  };
+
+  return (
+    <div className="w-full max-w-[85rem] mx-auto px-4 ">
+      {/* Header Row */}
+      <div className="flex justify-between items-center mb-3 mt-8">
+        <h2 className="flex items-center text-xl px-2 font-semibold">
+          <Calendar className="w-6 h-6 mr-2" />
+          Upcoming Events Panel
+        </h2>
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-[#073C9E] text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          + Add Event
+        </button>
+      </div>
+
+      {/* Cards */}
+      <div className="w-full bg-[#073C9E] rounded-3xl shadow-lg px-6">
+        <div className="relative flex items-center  bg-white">
+          {/* Left Arrow */}
+          {visibleStart > 0 && (
+            <button
+              onClick={() => setVisibleStart((prev) => Math.max(0, prev - 1))}
+              className="absolute left-[-20px] bg-white border border-gray-200 p-3 rounded-full shadow-md hover:bg-gray-100 z-20"
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              <ChevronLeft className="w-6 h-6 text-[#073C9E]" />
+            </button>
+          )}
+
+          {/* Cards Row */}
+          <div className="flex gap-3 flex-1 overflow-x-hidden">
+            {dates
+              .slice(visibleStart, visibleStart + daysToShow)
+              .map((date, idx) => {
+                const dayEvents = events.filter((e) => e.date === date);
+                const formatted = new Date(date).toDateString();
+                return (
+                  <div
+                    key={idx}
+                    className="flex-1 min-w-[240px] bg-white border border-solid  rounded-2xl shadow-sm m-4 p-4 text-center"
+                  >
+                    <h3 className="font-bold">{formatted}</h3>
+                    {dayEvents.length > 0 ? (
+                      <ul className="mt-2 space-y-1">
+                        {dayEvents.map((ev, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center justify-between text-sm bg-blue-50 rounded px-2 py-1"
+                          >
+                            <span>{ev.title}</span>
+                            {/* ⬅️ added remove button */}
+                            <button
+                              onClick={() => handleRemoveEvent(ev.date, ev.title)}
+                              className="text-[#073C9E] hover:text-red-600"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-400 mt-2 font-Poppins">No events</p>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* Right Arrow */}
+          {visibleStart + daysToShow < dates.length && (
+            <button
+              onClick={() =>
+                setVisibleStart((prev) =>
+                  Math.min(prev + 1, dates.length - daysToShow)
+                )
+              }
+              className="absolute right-[-20px] bg-white border border-gray-200 p-3 rounded-full shadow-md hover:bg-gray-100 z-20"
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              <ChevronRight className="w-6 h-6 text-[#073C9E]" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Event Modal */}
+      {showModal && (
+        <CreateEventModal
+          onClose={() => setShowModal(false)}
+          onAddEvent={handleAddEvent}
+        />
+      )}
+    </div>
+  );
+}
