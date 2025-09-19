@@ -32,11 +32,14 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
-import Dashboard from "./Components/Dashboard";
+// import Dashboard from "./Components/ODashboardOwner";
+import Dashboard from "./Components/MDashboardManager";
 import Occupancy from "./Components/Occupancy";
 import PendingDues from "./Components/Pending";
 import Profitibility from "./Components/Profitibility";
 import "./App.css";
+import GuestInsights from "./Components/pages/GuestInsights";
+
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(true);
@@ -61,12 +64,17 @@ export default function App() {
             isMobile ? "pt-16 ml-0" : isOpen ? "ml-48" : "ml-16"
           }`}
         >
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/Pending-dues" element={<PendingDues />} />
-            <Route path="/Profitibility" element={<Profitibility />} />
-            <Route path="/Occupancy" element={<Occupancy />} />
-          </Routes>
+   
+
+<Routes>
+  <Route path="/" element={<Dashboard />} />
+  <Route path="/Pending-dues" element={<PendingDues />} />
+  <Route path="/Profitibility" element={<Profitibility />} />
+  <Route path="/Occupancy" element={<Occupancy />} />
+  <Route path="/GuestInsights" element={<GuestInsights />} /> {/* <-- Already added */}
+
+</Routes>
+
         </main>
       </div>
     </BrowserRouter>
