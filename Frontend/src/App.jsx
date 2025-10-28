@@ -1,44 +1,14 @@
-//last code
-// import React from "react";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Navbar from "./Components/Navbar";
-// import Dashboard from "./Components/Dashboard";
-// import Occupancy from "./Components/Occupancy"; 
-// import PendingDues from "./Components/Pending"; 
-// import Profitibility from "./Components/Profitibility"; 
-// import "./App.css";
-
-// export default function App() {
-//   return (
-//     <BrowserRouter>
-//       <div className="app-shell">
-//         <Navbar />
-//         <div className="app-main pt-8 sm:pt-0">
-//           <Routes>
-//             <Route path="/" element={<Dashboard />} />
-//             <Route path="/pending-dues" element={<PendingDues />} />
-//             < Route path="/Profitibility" element={<Profitibility/>} />
-//             < Route path="/Occupancy" element={<Occupancy/>} />
-          
-//           </Routes>
-//         </div>
-//       </div>
-//     </BrowserRouter>
-//   );
-// }
-
-//updated code
-
-import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 import Navbar from "./Components/Navbar";
 // import Dashboard from "./Components/ODashboardOwner";
-import Dashboard from "./Components/MDashboardManager";
+// import Dashboard from "./Components/MDashboardManager";
+import Dashboard from "./Components/GDashboardGuest";
 import Occupancy from "./Components/Occupancy";
+import GuestInsights from "./Components/pages/GuestInsights";
 import PendingDues from "./Components/Pending";
 import Profitibility from "./Components/Profitibility";
-import "./App.css";
-import GuestInsights from "./Components/pages/GuestInsights";
 
 
 export default function App() {
